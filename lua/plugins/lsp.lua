@@ -96,6 +96,33 @@ return {
       })
       vim.lsp.enable("bashls")
 
+      -- =================== HTML ===================
+      vim.lsp.config("html", {
+        cmd = { "vscode-html-language-server", "--stdio" },
+        filetypes = { "html" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+      vim.lsp.enable("html")
+
+      -- =================== CSS ===================
+      vim.lsp.config("cssls", {
+        cmd = { "vscode-css-language-server", "--stdio" },
+        filetypes = { "css", "scss", "less" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+      vim.lsp.enable("cssls")
+
+      -- =================== JavaScript/TypeScript ===================
+      vim.lsp.config("tsserver", {
+        cmd = { "typescript-language-server", "--stdio" },
+        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+      vim.lsp.enable("tsserver")
+
       -- =================== lspsaga ===================
       require("lspsaga").setup({
         ui = { border = "rounded" },

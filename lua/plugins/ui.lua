@@ -18,8 +18,8 @@ return {
         sort_by = "name",
         view = { width = 24, side = "left" },
         renderer = { icons = { show = { git = true, folder = true, file = true, folder_arrow = true } } },
-        git = { enable = false, ignore = false },
-        filters = { custom = { "*.o", "*.out", "a.out" }, dotfiles = true, exclude = {} },
+        git = { enable = true, ignore = true },
+        filters = { custom = { "*.o", "*.out", "a.out" }, dotfiles = false, exclude = {} },
         actions = { open_file = { quit_on_open = false } },
 
         -- 功能增强
