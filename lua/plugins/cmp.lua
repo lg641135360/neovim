@@ -2,7 +2,7 @@ return {
   -- 自动补全（增强版）
   {
     "hrsh7th/nvim-cmp",
-    event = "VeryLazy", -- ❗ 延迟加载
+    event = "InsertEnter", -- ❗ 延迟加载
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",

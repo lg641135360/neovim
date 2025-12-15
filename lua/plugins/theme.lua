@@ -2,7 +2,7 @@
 
 -- 定义你想用的主题名字
 -- 可选: "tokyonight" 或 "catppuccin"
-local active_theme = "catppuccin"
+local active_theme = "tokyonight"
 
 -- 定义一个通用函数，用于在主题加载后设置自定义高亮
 local function apply_custom_highlights()
@@ -31,20 +31,20 @@ local themes = {
     "folke/tokyonight.nvim",
     config = function()
       require("tokyonight").setup({
-        style = "storm", -- 可选: "storm", "night", "moon", "day"
+        style = "night", -- 可选: "storm", "night", "moon", "day"
         transparent = true,
         terminal_colors = true,
         styles = {
+          comments = { italic = true },
+          keywords = { italic = true },
+          functions = { bold = true },
+          variables = {},
           sidebars = "transparent",
           floats = "transparent",
         },
-        on_highlights = function(hl, c)
-          -- 这里修改 Comment 颜色（绝对生效）
-          hl.Comment = { fg = "#d7a9b8", italic = true }
-        end,
       })
       vim.cmd("colorscheme tokyonight")
-      apply_custom_highlights()
+      --  apply_custom_highlights()
     end,
   },
 
@@ -95,7 +95,7 @@ local themes = {
       require("nightfox").setup({
         options = {
           -- 背景透明（浮动窗口、侧边栏等）
-          transparent = true,
+          transparent = false,
           -- 设置终端颜色
           terminal_colors = true,
           -- 非激活窗口背景

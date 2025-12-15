@@ -1,82 +1,101 @@
 return {
-	-- Git 集成
-	{
-		"lewis6991/gitsigns.nvim",
-		config = function()
-			require("gitsigns").setup()
-		end,
-	},
+  -- Git 集成
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup()
+    end,
+  },
 
-	-- 自动括号匹配
-	{
-		"windwp/nvim-autopairs",
-		config = function()
-			require("nvim-autopairs").setup({
-				check_ts = true, -- 启用 Treesitter 检测语言
-				enable_check_bracket_line = true, -- 同一行避免重复括号
-			})
+  -- 自动括号匹配
+  {
+    "windwp/nvim-autopairs",
+    config = function()
+      require("nvim-autopairs").setup({
+        check_ts = true, -- 启用 Treesitter 检测语言
+        enable_check_bracket_line = true, -- 同一行避免重复括号
+      })
 
-			-- 集成 nvim-cmp
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			local cmp = require("cmp")
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
-	},
+      -- 集成 nvim-cmp
+      local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+      local cmp = require("cmp")
+      cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+    end,
+  },
 
-	-- 一键注释
-	{
-		"numToStr/Comment.nvim",
-		config = function()
-			require("Comment").setup({
-				-- 默认配置已经很方便
-				toggler = {
-					line = "gcc", -- 切换行注释
-					block = "gbc", -- 切换块注释
-				},
-				opleader = {
-					line = "gc", -- 可视模式操作行注释
-					block = "gb", -- 可视模式操作块注释
-				},
-				mappings = {
-					basic = true, -- 启用基本映射
-					extra = true, -- gco/gcO 额外映射
-				},
-			})
-		end,
-	},
+  -- 一键注释
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup({
+        -- 默认配置已经很方便
+        toggler = {
+          line = "gcc", -- 切换行注释
+          block = "gbc", -- 切换块注释
+        },
+        opleader = {
+          line = "gc", -- 可视模式操作行注释
+          block = "gb", -- 可视模式操作块注释
+        },
+        mappings = {
+          basic = true, -- 启用基本映射
+          extra = true, -- gco/gcO 额外映射
+        },
+      })
+    end,
+  },
 
+  -- telescope
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("telescope").setup({
+        defaults = {
+          hidden = true,
+          prompt_prefix = "🔎 ",
+          selection_caret = "➤ ",
+          entry_prefix = "  ",
+          initial_mode = "insert",
+          sorting_strategy = "ascending",
+          layout_strategy = "horizontal",
+          layout_config = {
+            horizontal = { prompt_position = "top", preview_width = 0.6, results_width = 0.6 },
+          },
+          color_devicons = true,
+          dynamic_preview_title = true,
+          path_display = { "smart" },
 
+          -- ⭐ 在这里添加过滤规则
+          file_ignore_patterns = {
+            "node_modules",
+            ".git",
 
-	-- telescope
-	{
-		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("telescope").setup({
-				defaults = {
-					hidden = true,
-					prompt_prefix = "🔎 ",
-					selection_caret = "➤ ",
-					entry_prefix = "  ",
-					initial_mode = "insert",
-					sorting_strategy = "ascending",
-					layout_strategy = "horizontal",
-					layout_config = {
-						horizontal = { prompt_position = "top", preview_width = 0.6, results_width = 0.6 },
-					},
-					color_devicons = true,
-					dynamic_preview_title = true,
-					path_display = { "smart" },
-					file_ignore_patterns = { "node_modules", ".git" },
-					--[[ 	find_command = { "fd", "--type", "f", "--hidden", "--no-ignore" }, ]]
-				},
-			})
+            -- 二进制文件
+            "%.o$",
+            "%.a$",
+            "%.so$",
+            "%.out$",
+            "%.elf$",
+            "%.bin$",
+            "%.hex$",
+            "%.exe$",
+            "%.dll$",
 
+            -- 虚拟机/中间语言
+            "%.class$",
+            "%.pyc$",
 
-		end,
-	},
+            -- 构建目录
+            "build/",
+            "dist/",
+            "target/",
+            "__pycache__/",
+          },
 
-
+          --[[ 	find_command = { "fd", "--type", "f", "--hidden", "--no-ignore" }, ]]
+        },
+      })
+    end,
+  },
 }
-
-

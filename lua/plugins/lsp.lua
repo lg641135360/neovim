@@ -20,6 +20,16 @@ return {
       local on_attach = function(client, bufnr)
         print("✅ LSP attached: " .. client.name)
 
+        -- 如果是 clangd，关闭其诊断
+        -- if client.name == "clangd" then
+        --   client.server_capabilities.documentFormattingProvider = false
+        --   -- 关键：禁用该 LSP 客户端发送的诊断
+        --   if client.supports_method("textDocument/publishDiagnostics") then
+        --     -- 覆盖诊断处理：什么都不做
+        --     vim.diagnostic.disable(bufnr)
+        --   end
+        -- end
+
         local opts = { noremap = true, silent = true, buffer = bufnr }
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
@@ -34,9 +44,10 @@ return {
           "--background-index",
           "--suggest-missing-includes",
           "--clang-tidy",
+          "--query-driver=/usr/bin/sdcc", -- 👈 关键！允许 clangd 查询 SDCC 的头文件
         },
         filetypes = { "c", "cpp", "objc", "objcpp" },
-        root_markers = { "compile_commands.json", "CMakeLists.txt", ".git" },
+        root_markers = { ".clangd", "compile_commands.json", "CMakeLists.txt", ".git" },
         capabilities = capabilities,
         on_attach = on_attach,
       })
@@ -89,7 +100,7 @@ return {
       -- =================== Bash ===================
       vim.lsp.config("bashls", {
         cmd = { "bash-language-server", "start" },
-        filetypes = { "sh", "bash" },
+        filetypes = { "sh", "bash", "make" },
         root_markers = { ".git", ".bashrc", ".zshrc", "Makefile", "Dockerfile" },
         capabilities = capabilities,
         on_attach = on_attach,

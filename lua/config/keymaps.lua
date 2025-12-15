@@ -54,6 +54,7 @@ map("n", "<leader>fg", ":Telescope live_grep<CR>", opts) -- grep 搜索 -- 基�
 map("n", "<leader>fb", ":Telescope buffers<CR>", opts) -- 切换 buffer
 map("n", "<leader>fh", ":Telescope help_tags<CR>", opts) -- 查帮助文档
 map("n", "<leader>rf", ":Telescope oldfiles<CR>", opts) -- 查询近期文件
+vim.keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<CR>", { desc = "Find References" })
 
 -- 搜索后按 Enter 跳到下一个匹配
 vim.keymap.set("n", "<CR>", "n", { noremap = true, silent = true })
@@ -263,8 +264,8 @@ map("n", "<F8>", cmake_build.run, opts)
 -- 打开诊断窗口
 vim.keymap.set("n", "<leader>xx", ":Trouble diagnostics toggle<CR>", opts)
 --
--- 重命名
-vim.keymap.set("n", "<leader>rn", ":Lspsaga rename<CR>", opts)
+-- 在你的配置中绑定快捷键
+-- vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "LSP Rename" })
 --
 -- 让 ]] 的行为更智能（使用 matchit）
 vim.keymap.set("n", "]]", ":normal! ]m<CR>", opts)
