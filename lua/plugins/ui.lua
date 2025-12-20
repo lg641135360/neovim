@@ -9,26 +9,26 @@ return {
   },
 
   -- 文件树
-  {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      local nvim_tree = require("nvim-tree")
-      nvim_tree.setup({
-        sort_by = "name",
-        view = { width = 24, side = "left" },
-        renderer = { icons = { show = { git = true, folder = true, file = true, folder_arrow = true } } },
-        git = { enable = true, ignore = true },
-        filters = { custom = { "*.o", "*.out", "a.out" }, dotfiles = false, exclude = {} },
-        actions = { open_file = { quit_on_open = false } },
-
-        -- 功能增强
-        update_focused_file = { enable = true, update_cwd = true },
-        sync_root_with_cwd = true,
-        reload_on_bufenter = true,
-      })
-    end,
-  },
+  -- {
+  --   "nvim-tree/nvim-tree.lua",
+  --   dependencies = { "nvim-tree/nvim-web-devicons" },
+  --   config = function()
+  --     local nvim_tree = require("nvim-tree")
+  --     nvim_tree.setup({
+  --       sort_by = "name",
+  --       view = { width = 24, side = "left" },
+  --       renderer = { icons = { show = { git = true, folder = true, file = true, folder_arrow = true } } },
+  --       git = { enable = true, ignore = true },
+  --       filters = { custom = { "*.o", "*.out", "a.out" }, dotfiles = false, exclude = {} },
+  --       actions = { open_file = { quit_on_open = false } },
+  --
+  --       -- 功能增强
+  --       update_focused_file = { enable = true, update_cwd = true },
+  --       sync_root_with_cwd = true,
+  --       reload_on_bufenter = true,
+  --     })
+  --   end,
+  -- },
 
   -- 顶部 tab
   {
@@ -97,6 +97,7 @@ return {
 
           buffer_visible = { bg = "none" },
           buffer_selected = { bg = "none", bold = true, italic = true },
+          -- buffer_selected = { bg = "#F07178", fg = "#FFFFFF", bold = true, italic = true },
 
           numbers = { bg = "none" },
           numbers_visible = { bg = "none" },
