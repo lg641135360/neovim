@@ -47,6 +47,18 @@ return {
       }
       vim.lsp.enable("clangd")
 
+      vim.lsp.config["cmake"] = {
+        cmd = { "cmake-language-server" },
+        filetypes = { "cmake" },
+        root_markers = { "CMakePresets.json", "CTestConfig.cmake", ".git", "build", "cmake" },
+        init_options = {
+          buildDirectory = "build",
+        },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      }
+      vim.lsp.enable("cmake")
+
       -- =================== Python ===================
       vim.lsp.config["pyright"] = {
         cmd = { "pyright-langserver", "--stdio" },
@@ -96,7 +108,7 @@ return {
       -- =================== Bash ===================
       vim.lsp.config["bashls"] = {
         cmd = { "bash-language-server", "start" },
-        filetypes = { "sh", "bash", "make" },
+        filetypes = { "sh", "bash", "make", "zsh" },
         root_markers = { ".git", ".bashrc", ".zshrc", "Makefile", "Dockerfile" },
         capabilities = capabilities,
         on_attach = on_attach,

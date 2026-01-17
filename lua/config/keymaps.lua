@@ -54,9 +54,6 @@ map("n", "<leader>q", ":q<CR>", opts) -- 关闭
 -- map("n", "<leader>rf", ":Telescope oldfiles<CR>", opts) -- 查询近期文件
 -- vim.keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<CR>", { desc = "Find References" })
 
--- 搜索后按 Enter 跳到下一个匹配
---[[ vim.keymap.set("n", "<CR>", "n", { noremap = true, silent = true }) ]]
-
 -- 在终端模式中按 Esc 直接退出到普通模式
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })
 
@@ -89,7 +86,9 @@ map("n", "vl", "V", opts)
 -- ===============================
 -- 搜索操作
 -- ===============================
-map("n", "<leader><space>", ":let @/=''<CR>:noh<CR>", opts) -- 清除搜索高亮
+-- map("n", "<leader><space>", ":let @/=''<CR>:noh<CR>", opts) -- 清除搜索高亮
+
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 
 local float_term = {}
 

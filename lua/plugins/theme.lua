@@ -4,20 +4,6 @@
 -- 可选: "tokyonight" 或 "catppuccin"
 local active_theme = "onedark"
 
--- 定义一个通用函数，用于在主题加载后设置自定义高亮
-local function apply_custom_highlights()
-  -- 💠 设置透明补全菜单
-  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" }) -- 所有浮窗透明
-  vim.api.nvim_set_hl(0, "Pmenu", { bg = "NONE", blend = 0 }) -- 补全菜单透明
-  vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#5fbdd5", fg = "#1e1e2e", bold = true }) -- 选中项
-  vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#89dceb", bg = "NONE" }) -- 边框保留
-end
-
--- 当主题重新加载时自动应用这些高亮
-vim.api.nvim_create_autocmd("ColorScheme", {
-  callback = apply_custom_highlights,
-})
-
 -- 定义主题配置表
 local themes = {
   -- tokyonight
@@ -65,7 +51,6 @@ local themes = {
         },
       })
       vim.cmd("colorscheme catppuccin")
-      apply_custom_highlights()
     end,
   },
 
@@ -78,7 +63,6 @@ local themes = {
         transparent_mode = true, -- 背景透明
       })
       vim.cmd("colorscheme gruvbox")
-      apply_custom_highlights()
     end,
   },
 

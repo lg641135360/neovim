@@ -65,6 +65,7 @@ return {
         auto_show = true,
         scrollbar = false,
         border = "rounded",
+        winhighlight = "Normal:BlinkCmpMenu,FloatBorder:FloatBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
 
         draw = {
           components = {
@@ -120,6 +121,7 @@ return {
         window = {
           border = "rounded",
           scrollbar = false,
+          winhighlight = "Normal:BlinkCmpDoc,FloatBorder:FloatBorder,EndOfBuffer:BlinkCmpDoc",
         },
       },
     },
@@ -139,17 +141,6 @@ return {
     fuzzy = { implementation = "prefer_rust_with_warning" },
   },
   opts_extend = { "sources.default" },
-
-  -- 🔹 这里添加透明 + 边框颜色的高亮
-  -- config = function(_, opts)
-  --   -- 先调用默认的 setup
-  --   require("blink.cmp").setup(opts)
-  --
-  --   -- 然后覆盖高亮
-  --   local hl = vim.api.nvim_set_hl
-  --   hl(0, "BlinkCmpMenuBorder", { fg = "#f5c2e7", bg = "none" })
-  --   hl(0, "BlinkCmpDocBorder", { fg = "#f5c2e7", bg = "none" })
-  -- end,
 }
 
 -- return {}

@@ -23,6 +23,9 @@ local C = {
   pink = "#f5bde6",
   flamingo = "#f0c6c6",
   rosewater = "#f4dbd6",
+  white = "#FFFFFF",
+  ice_white = "#F0F8FF",
+  mint_cream = "#F5FFFA",
 }
 
 vim.opt.number = true
@@ -67,3 +70,23 @@ vim.o.modeline = false
 
 -- 添加 '-' 词语
 vim.opt.iskeyword:append("-")
+
+-- 定义一个通用函数，用于在主题加载后设置自定义高亮
+local function apply_custom_highlights()
+  -- 💠 设置透明补全菜单
+  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" }) -- 所有浮窗透明
+  vim.api.nvim_set_hl(0, "Pmenu", { bg = "NONE", blend = 0 }) -- 补全菜单透明
+  vim.api.nvim_set_hl(0, "PmenuSel", { bg = C.pink, fg = C.surface0, bold = true }) -- 选中项
+  vim.api.nvim_set_hl(0, "FloatBorder", { fg = C.ice_white, bg = "NONE" }) -- 边框保留
+
+  vim.api.nvim_set_hl(0, "CurSearch", {
+    bg = C.mint_cream,
+    fg = C.surface0,
+    bold = true,
+  }) -- 搜索当前项
+end
+
+-- 当主题重新加载时自动应用这些高亮
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = apply_custom_highlights,
+})
