@@ -60,7 +60,7 @@ local themes = {
     config = function()
       require("gruvbox").setup({
         contrast = "medium", -- 可选: "hard", "medium", "soft"
-        transparent_mode = true, -- 背景透明
+        transparent_mode = false, -- 背景透明
       })
       vim.cmd("colorscheme gruvbox")
     end,
@@ -155,21 +155,21 @@ local themes = {
         ending_tildes = false, -- Show the end-of-buffer tildes. By default they are hidden
         cmp_itemkind_reverse = false, -- reverse item kind highlights in cmp menu
 
-        code_style = {
-          comments = "italic", -- 注释：轻、斜，弱化存在感
-          keywords = "bold", -- 关键字：结构骨架，要稳
-          functions = "bold", -- 函数名：重点
-          strings = "italic", -- 字符串：略微区分
-          variables = "none", -- 变量：保持干净
-        },
-
         -- code_style = {
-        --   comments = "italic",
-        --   keywords = "none",
-        --   functions = "none",
-        --   strings = "italic",
-        --   variables = "none",
+        --   comments = "italic", -- 注释：轻、斜，弱化存在感
+        --   keywords = "bold", -- 关键字：结构骨架，要稳
+        --   functions = "bold", -- 函数名：重点
+        --   strings = "italic", -- 字符串：略微区分
+        --   variables = "none", -- 变量：保持干净
         -- },
+
+        code_style = {
+          comments = "italic",
+          keywords = "none",
+          functions = "none",
+          strings = "italic",
+          variables = "none",
+        },
 
         lualine = {
           transparent = false, -- lualine center bar transparency
@@ -229,6 +229,15 @@ local themes = {
 
       -- somewhere in your config:
       vim.cmd("colorscheme vaporwave")
+    end,
+  },
+
+  melange = {
+    "savq/melange-nvim",
+    priority = 1000,
+
+    config = function()
+      vim.cmd("colorscheme melange")
     end,
   },
 }

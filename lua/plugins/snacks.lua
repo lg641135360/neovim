@@ -54,6 +54,7 @@ return {
     scope = { enabled = true },
     dashboard = { enabled = true },
     input = { enabled = true },
+    animate = {},
   },
 
   keys = {

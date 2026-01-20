@@ -8,6 +8,7 @@ return {
         javascript = { "prettier" },
         typescript = { "prettier" },
         json = { "jq" },
+        jsonc = { "prettier" },
         sh = { "shfmt" },
         c = { "clang-format" }, -- 添加 C 语言
         cc = { "clang-format" },

@@ -1,6 +1,7 @@
 -- 在 lazy.nvim 中配置 header.nvim 插件
 return {
   "attilarepka/header.nvim",
+  event = "CmdlineEnter", -- 延迟加载：进入命令模式时才加载
   opts = {
     -- 你可以在这里自定义配置
     allow_autocmds = true,

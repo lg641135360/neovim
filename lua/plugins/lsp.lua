@@ -17,7 +17,8 @@ return {
       --   capabilities = cmp_lsp.default_capabilities(capabilities)
       -- end
 
-      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      -- local capabilities = require("blink.cmp").get_lsp_capabilities()
+      local capabilities = {}
 
       -- =================== on_attach ===================
       local on_attach = function(client, bufnr)
