@@ -1,7 +1,12 @@
 return {
   "saghen/blink.cmp",
   -- optional: provides snippets for the snippet source
-  dependencies = { "rafamadriz/friendly-snippets", "onsails/lspkind-nvim", "nvim-tree/nvim-web-devicons" },
+  dependencies = {
+    "rafamadriz/friendly-snippets",
+    "onsails/lspkind-nvim",
+    "nvim-tree/nvim-web-devicons",
+    "L3MON4D3/LuaSnip",
+  },
 
   -- use a release tag to download pre-built binaries
   version = "1.*",

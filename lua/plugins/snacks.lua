@@ -195,5 +195,13 @@ return {
       end,
       desc = "LSP Workspace Symbols",
     },
+
+    {
+      "<leader>nh",
+      function()
+        Snacks.picker.notifications()
+      end,
+      desc = "Notification History",
+    },
   },
 }

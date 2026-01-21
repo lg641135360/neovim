@@ -18,7 +18,8 @@ return {
       -- end
 
       -- local capabilities = require("blink.cmp").get_lsp_capabilities()
-      local capabilities = {}
+      -- local capabilities = {}
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
 
       -- =================== on_attach ===================
       local on_attach = function(client, bufnr)
@@ -143,6 +144,14 @@ return {
         on_attach = on_attach,
       }
       vim.lsp.enable("tsserver")
+
+      vim.lsp.config["tex"] = {
+        cmd = { "texlab" },
+        filetypes = { "tex" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      }
+      vim.lsp.enable("tex")
 
       -- =================== lspsaga ===================
       require("lspsaga").setup({

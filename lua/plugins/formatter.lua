@@ -15,6 +15,7 @@ return {
         cpp = { "clang-format" }, -- 如果写 C++ 也用 clang-format
         html = { "prettier" }, -- 添加 HTML 格式化工具
         css = { "prettier" }, -- 添加 CSS 格式化工具
+        tex = { "tex-fmt" },
       },
       format_on_save = {
         timeout_ms = 500,
