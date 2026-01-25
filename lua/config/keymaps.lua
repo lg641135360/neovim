@@ -75,3 +75,6 @@ vim.keymap.set("n", "<leader>tb", function()
     vim.o.showtabline = 0
   end
 end, { desc = "Toggle Bufferline" })
+
+-- 普通模式下全选
+map("n", "<C-a>", "gg0vG$", opts)

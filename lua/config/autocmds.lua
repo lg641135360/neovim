@@ -29,6 +29,13 @@ local function apply_custom_highlights()
     fg = C.surface0,
     bold = true,
   }) -- 搜索当前项
+
+  -- ✨ Visual 模式选中区域
+  vim.api.nvim_set_hl(0, "Visual", {
+    bg = C.pink,
+    fg = C.surface0,
+    bold = true,
+  })
 end
 
 -- 应用高亮
