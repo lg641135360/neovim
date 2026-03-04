@@ -1,183 +1,94 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      -- "hrsh7th/cmp-nvim-lsp",
-      "glepnir/lspsaga.nvim",
-      "folke/trouble.nvim",
-      "j-hui/fidget.nvim",
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
       "saghen/blink.cmp",
+      { "folke/neodev.nvim", opts = {} }, -- 为 LSP 提供 Neovim Lua 开发环境
     },
     config = function()
-      -- =================== capabilities ===================
-      -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-      -- local ok, cmp_lsp = pcall(require, "cmp_nvim_lsp")
-      -- if ok then
-      --   capabilities = cmp_lsp.default_capabilities(capabilities)
-      -- end
+      local lspconfig = require("lspconfig")
+      local blink = require("blink.cmp")
+      local capabilities = blink.get_lsp_capabilities()
 
-      -- local capabilities = require("blink.cmp").get_lsp_capabilities()
-      -- local capabilities = {}
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-      -- =================== on_attach ===================
       local on_attach = function(client, bufnr)
-        local opts = { noremap = true, silent = true, buffer = bufnr }
+        local map = function(keys, func, desc)
+          vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
+        end
 
-        vim.notify("LSP attached: " .. client.name, vim.log.levels.INFO)
+        -- ❌ 移除了所有 Telescope 相关的绑定 (gd, gr, gI, etc.)
+        -- ✅ 这些功能现在由 snacks.lua 中的 pickers 接管
 
-        -- 开启 inlay hints
-        -- if client.server_capabilities.inlayHintProvider then
-        --   vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-        -- end
+        map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+        map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+        map("K", vim.lsp.buf.hover, "Hover Documentation")
+        -- map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration") -- Snacks 也有这个绑定
+
+        -- 客户端特定配置
+        if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+          map("<leader>th", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+          end, "[T]oggle Inlay [H]ints")
+        end
       end
 
-      -- =================== C / C++ ===================
-      vim.lsp.config["clangd"] = {
-        cmd = {
-          "clangd",
-          "--background-index",
-          "--suggest-missing-includes",
-          "--clang-tidy",
-          "--query-driver=/usr/bin/arm-none-eabi-gcc,/usr/bin/arm-none-eabi-g++",
-        },
-        filetypes = { "c", "cpp", "objc", "objcpp", "cc" },
-        root_markers = { ".clangd", "compile_commands.json", "CMakeLists.txt", ".git" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("clangd")
+      -- 通用 Handler
+      local setup_server = function(server_name, config)
+        config = config or {}
+        config.capabilities = vim.tbl_deep_extend("force", capabilities, config.capabilities or {})
+        config.on_attach = on_attach
+        lspconfig[server_name].setup(config)
+      end
 
-      -- =================== CMake ===================
-      vim.lsp.config["cmake"] = {
-        cmd = { "cmake-language-server" },
-        filetypes = { "cmake" },
-        root_markers = { "CMakePresets.json", "CTestConfig.cmake", ".git", "build", "cmake" },
-        init_options = {
-          buildDirectory = "build",
-        },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("cmake")
-
-      -- =================== Python ===================
-      vim.lsp.config["pyright"] = {
-        cmd = { "pyright-langserver", "--stdio" },
-        root_markers = { "pyproject.toml", "setup.py", "requirements.txt", ".git" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = {
-          python = {
-            pythonPath = "./venv/bin/python", -- ⭐ 关键
-            analysis = {
-              typeCheckingMode = "basic",
-              autoSearchPaths = true,
-              diagnosticMode = "workspace",
-              useLibraryCodeForTypes = true,
-              reportAttributeAccessIssue = "none", -- ⭐ 解决 tf.keras
-            },
-          },
-        },
-      }
-      vim.lsp.enable("pyright")
-
-      -- =================== Lua ===================
-      vim.lsp.config["lua_ls"] = {
-        cmd = { "lua-language-server" },
-        filetypes = { "lua" },
-        root_markers = { ".git", "lua" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = {
-          Lua = {
-            runtime = { version = "LuaJIT" },
-            diagnostics = { globals = { "vim" } },
-            workspace = {
-              library = {
-                vim.fn.stdpath("config"),
-                vim.fn.stdpath("data") .. "/lazy",
-                vim.api.nvim_get_runtime_file("", true),
+      -- Mason 自动设置所有服务器
+      require("mason-lspconfig").setup_handlers({
+        function(server_name)
+          setup_server(server_name)
+        end,
+        ["lua_ls"] = function()
+          setup_server("lua_ls", {
+            settings = {
+              Lua = {
+                completion = { callSnippet = "Replace" },
+                workspace = { checkThirdParty = false },
+                telemetry = { enable = false },
               },
-              checkThirdParty = false,
             },
-            telemetry = { enable = false },
-          },
-        },
-      }
-      vim.lsp.enable("lua_ls")
-
-      -- =================== Bash ===================
-      vim.lsp.config["bashls"] = {
-        cmd = { "bash-language-server", "start" },
-        filetypes = { "sh", "bash", "make", "zsh" },
-        root_markers = { ".git", ".bashrc", ".zshrc", "Makefile", "Dockerfile" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("bashls")
-
-      -- =================== HTML ===================
-      vim.lsp.config["html"] = {
-        cmd = { "vscode-html-language-server", "--stdio" },
-        filetypes = { "html" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("html")
-
-      -- =================== CSS ===================
-      vim.lsp.config["cssls"] = {
-        cmd = { "vscode-css-language-server", "--stdio" },
-        filetypes = { "css", "scss", "less" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("cssls")
-
-      -- =================== JavaScript/TypeScript ===================
-      vim.lsp.config["tsserver"] = {
-        cmd = { "typescript-language-server", "--stdio" },
-        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("tsserver")
-
-      vim.lsp.config["tex"] = {
-        cmd = { "texlab" },
-        filetypes = { "tex" },
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-      vim.lsp.enable("tex")
-
-      -- =================== lspsaga ===================
-      require("lspsaga").setup({
-        ui = { border = "rounded" },
-        symbol_in_winbar = { enable = false },
-        lightbulb = { enable = false, virtual_text = false },
-      })
-
-      -- =================== trouble ===================
-      require("trouble").setup({
-        win = { position = "bottom", height = 0.3 },
-        icons = {
-          error = "",
-          warning = "",
-          hint = "",
-          information = "",
-        },
-        mode = "workspace_diagnostics",
-        fold_open = "",
-        fold_closed = "",
-        action_keys = {
-          close = "q",
-          jump = { "<cr>", "<tab>" },
-          refresh = "r",
-        },
-        use_diagnostic_signs = true,
+          })
+        end,
+        ["clangd"] = function()
+          setup_server("clangd", {
+            cmd = {
+              "clangd",
+              "--background-index",
+              "--clang-tidy",
+              "--header-insertion=iwyu",
+              "--completion-style=detailed",
+              "--function-arg-placeholders",
+              "--fallback-style=llvm",
+            },
+          })
+        end,
+        ["pyright"] = function()
+          setup_server("pyright", {
+            settings = {
+              python = {
+                analysis = {
+                  typeCheckingMode = "basic",
+                  autoSearchPaths = true,
+                  useLibraryCodeForTypes = true,
+                  diagnosticMode = "workspace",
+                },
+              },
+            },
+          })
+        end,
+        -- 移除 tsserver，改用 ts_ls
+        ["ts_ls"] = function()
+          setup_server("ts_ls")
+        end,
       })
     end,
   },

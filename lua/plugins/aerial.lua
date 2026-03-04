@@ -19,7 +19,7 @@ return -- 使用 lazy.nvim 安装示例
       --   "Field", -- 👈 字段（如 struct/class 成员）
       -- },
 
-      filter_kind = false,
+      -- filter_kind = false,
 
       layout = {
         resize_to_content = false,
