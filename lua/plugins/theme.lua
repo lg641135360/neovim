@@ -150,7 +150,7 @@ local themes = {
     config = function()
       require("onedark").setup({
         style = "darker",
-        transparent = true, -- Show/hide background
+        transparent = false, -- 关闭背景透明，使代码更易阅读
         term_colors = true, -- Change terminal color as per the selected theme style
         ending_tildes = false, -- Show the end-of-buffer tildes. By default they are hidden
         cmp_itemkind_reverse = false, -- reverse item kind highlights in cmp menu
