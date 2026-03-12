@@ -1,11 +1,8 @@
 return {
-  "williamboman/mason.nvim",
-  dependencies = {
-    "williamboman/mason-lspconfig.nvim",
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-  },
-  config = function()
-    require("mason").setup({
+  {
+    "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
+    opts = {
       ui = {
         icons = {
           package_installed = "✓",
@@ -13,31 +10,31 @@ return {
           package_uninstalled = "✗",
         },
       },
-    })
-
-    require("mason-lspconfig").setup({
-      -- 自动安装这些 servers
+    },
+    build = ":MasonUpdate",
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    opts = {
+      -- 禁用 automatic_enable，因为我们在 lsp.lua 中手动配置服务器
+      automatic_enable = false,
+    },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    opts = {
       ensure_installed = {
-        "lua_ls",
-        "clangd",
-        "pyright",
-        "bashls",
-        "html",
-        "cssls",
-        "ts_ls", -- 曾叫 tsserver，现已更名为 ts_ls
-        "cmake",
-        "texlab",
+        "stylua",
+        "black",
+        "isort",
+        "prettier",
+        "clang-format",
+        "jq",
+        "shfmt",
+        "tex-fmt",
       },
-    })
-
-    require("mason-tool-installer").setup({
-      ensure_installed = {
-        "stylua", -- Lua formatter
-        "black", -- Python formatter
-        "isort", -- Python imports sorter
-        "prettier", -- Prettier formatter
-        "clang-format", -- C/C++ formatter
-      },
-    })
-  end,
+    },
+  },
 }
