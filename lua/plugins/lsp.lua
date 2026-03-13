@@ -37,10 +37,8 @@ return {
         end
       end
 
-      lspconfig.util.default_config.capabilities = vim.tbl_deep_extend("force",
-        original_capabilities or {},
-        capabilities
-      )
+      lspconfig.util.default_config.capabilities =
+        vim.tbl_deep_extend("force", original_capabilities or {}, capabilities)
 
       -- 配置特定服务器
       lspconfig.lua_ls.setup({
@@ -56,6 +54,7 @@ return {
       lspconfig.clangd.setup({
         cmd = {
           "clangd",
+          "--compile-commands-dir=build",
           "--background-index",
           "--clang-tidy",
           "--header-insertion=iwyu",
