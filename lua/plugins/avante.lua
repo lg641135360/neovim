@@ -3,18 +3,15 @@ return {
   event = "VeryLazy",
   version = false,
   opts = {
-    provider = "claude",
+    provider = "openai",
     providers = {
-      claude = {
-        __inherited_from = "openai",
-        api_key_name = "ANTHROPIC_API_KEY",
-        endpoint = "https://api.anthropic.com/v1",
-        model = "claude-sonnet-4-20250514",
-        -- 可选：使用更高智能的模型
-        -- model = "claude-opus-4-20250514",
+      openai = {
+        endpoint = "https://coding.dashscope.aliyuncs.com/v1",
+        api_key_name = "OPENAI_API_KEY",
+        model = "qwen3.5-plus",
       },
     },
-    auto_suggestions_provider = "claude",
+    auto_suggestions_provider = "openai",
     behaviour = {
       auto_set_highlight_group = true,
       auto_set_keymaps = true,
