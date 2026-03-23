@@ -17,10 +17,6 @@ return {
         css = { "prettier" }, -- 添加 CSS 格式化工具
         tex = { "tex-fmt" },
       },
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = false,
-      },
     },
   },
 }
