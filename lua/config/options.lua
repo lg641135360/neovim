@@ -45,3 +45,6 @@ vim.g.loaded_netrw = 1
 
 -- 禁止加载 netrw 的 plugin 层
 vim.g.loaded_netrwPlugin = 1
+
+-- use system clipboard
+vim.opt.clipboard = "unnamedplus"
