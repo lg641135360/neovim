@@ -6,53 +6,61 @@ return {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "saghen/blink.cmp",
-      { "folke/neodev.nvim", opts = {} },
     },
     config = function()
       local mason_lspconfig = require("mason-lspconfig")
-      local lspconfig = require("lspconfig")
       local blink = require("blink.cmp")
-      local capabilities = blink.get_lsp_capabilities()
 
-      -- 设置 on_attach 和 capabilities 的默认配置
-      local original_setup = lspconfig.util.default_config.on_attach
-      local original_capabilities = lspconfig.util.default_config.capabilities
+      vim.lsp.config("*", {
+        capabilities = blink.get_lsp_capabilities(),
+      })
 
-      lspconfig.util.default_config.on_attach = function(client, bufnr)
-        if original_setup then
-          original_setup(client, bufnr)
-        end
+      local lsp_keymaps = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true })
 
-        local map = function(keys, func, desc)
-          vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
-        end
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = lsp_keymaps,
+        callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          local bufnr = event.buf
 
-        map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-        map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-        map("K", vim.lsp.buf.hover, "Hover Documentation")
+          if not client then
+            return
+          end
 
-        if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-          map("<leader>th", function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-          end, "[T]oggle Inlay [H]ints")
-        end
-      end
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
+          end
 
-      lspconfig.util.default_config.capabilities =
-        vim.tbl_deep_extend("force", original_capabilities or {}, capabilities)
+          map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+          map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+          map("K", vim.lsp.buf.hover, "Hover Documentation")
 
-      -- 配置特定服务器
-      lspconfig.lua_ls.setup({
+          if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+            map("<leader>th", function()
+              local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+              vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
+            end, "[T]oggle Inlay [H]ints")
+          end
+        end,
+      })
+
+      -- Neovim 0.12 原生 LSP 配置：先定义 config，再显式 enable。
+      vim.lsp.config("lua_ls", {
         settings = {
           Lua = {
             completion = { callSnippet = "Replace" },
-            workspace = { checkThirdParty = false },
+            runtime = { version = "LuaJIT" },
+            diagnostics = { globals = { "vim" } },
+            workspace = {
+              checkThirdParty = false,
+              library = vim.api.nvim_get_runtime_file("", true),
+            },
             telemetry = { enable = false },
           },
         },
       })
 
-      lspconfig.clangd.setup({
+      vim.lsp.config("clangd", {
         cmd = {
           "clangd",
           "--compile-commands-dir=build",
@@ -65,7 +73,7 @@ return {
         },
       })
 
-      lspconfig.pyright.setup({
+      vim.lsp.config("pyright", {
         settings = {
           python = {
             analysis = {
@@ -78,11 +86,18 @@ return {
         },
       })
 
-      lspconfig.ts_ls.setup({})
+      vim.lsp.config("ts_ls", {})
 
-      -- 安装 mason-lspconfig 但禁用 automatic_enable，因为我们手动 setup 了
+      -- 保留 Mason 管理/安装关系，但让 lsp.lua 的 vim.lsp.enable 成为唯一启用来源。
       mason_lspconfig.setup({
         automatic_enable = false,
+      })
+
+      vim.lsp.enable({
+        "lua_ls",
+        "clangd",
+        "pyright",
+        "ts_ls",
       })
     end,
   },

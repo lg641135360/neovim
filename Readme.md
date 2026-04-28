@@ -21,14 +21,15 @@
 
 ### 🔹 LSP (Language Server Protocol)
 
-- 使用 **Neovim 内置 LSP**
+- 使用 **Neovim 内置 LSP**，配置主线对齐 0.12 `vim.lsp.config()` / `vim.lsp.enable()`
 - `mason.nvim` 负责 LSP / Formatter / DAP 管理
+- `nvim-lspconfig` 保留为 server config 数据来源，不再使用旧的 `lspconfig.SERVER.setup()` 主线
 - `lsp.lua` 统一配置：
-  - capabilities
-  - keymaps
-  - diagnostics
+  - `blink.cmp` LSP capabilities
+  - LSP buffer-local alias keymaps
   - inlay hints
   - server-specific settings
+  - `lua_ls` 显式声明 Neovim LuaJIT runtime、`vim` global 与 runtime `workspace.library`，不再依赖旧 `neodev.nvim` hook
 
 > 目标：**让编辑器理解代码，而不是堆插件**
 
@@ -54,11 +55,7 @@
   - 更清晰的 source 管理
 
 配置文件：
-```
-
-lua/plugins/blink-cmp.lua
-
-```
+`lua/plugins/blink-cmp.lua`
 
 ---
 
@@ -76,11 +73,7 @@ lua/plugins/blink-cmp.lua
 - Indent / UI enhancements
 
 配置文件：
-```
-
-lua/plugins/snacks.lua
-
-````
+`lua/plugins/snacks.lua`
 
 ---
 
@@ -103,7 +96,7 @@ lua/plugins/snacks.lua
 │       ├── formatter.lua
 │       └── ...
 └── README.md
-````
+```
 
 ---
 
@@ -111,7 +104,7 @@ lua/plugins/snacks.lua
 
 | Category    | Plugin                         |
 | ----------- | ------------------------------ |
-| LSP         | `nvim-lspconfig`, `mason.nvim` |
+| LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim` |
 | Completion  | `blink-cmp`                    |
 | UI / Picker | `snacks.nvim`                  |
 | File Tree   | `neo-tree.nvim`                |
