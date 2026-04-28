@@ -10,6 +10,8 @@ vim.opt.termguicolors = true
 vim.opt.swapfile = false
 vim.opt.mouse = "a"
 vim.opt.laststatus = 3
+vim.opt.winborder = "rounded"
+vim.opt.pumborder = "rounded"
 
 -- 禁止自动注释续行
 vim.opt.formatoptions:remove({ "c", "r", "o" })
@@ -20,6 +22,10 @@ vim.opt.cursorlineopt = "number" -- 只高亮行号，而不是整行
 -- 全局 LSP 诊断配置
 vim.diagnostic.config({
   signs = false, -- ❌ 左侧 gutter 不显示 E/W
+  float = {
+    border = "rounded",
+    source = "if_many",
+  },
   -- underline = true, -- 保留下划线标记
   -- virtual_text = true, -- 保留行内提示文字
   -- update_in_insert = false, -- 插入模式不更新（可选）
