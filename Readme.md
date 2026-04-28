@@ -43,6 +43,7 @@
 - `grr` 使用 `snacks.nvim` references picker，对齐 Neovim 0.12 references 默认语义。
 - `<leader>rn` 现在只作为 LSP buffer-local rename alias，和 `grn` 一起调用 Neovim 原生 rename。
 - 浮窗与补全菜单默认使用 0.12 `winborder` / `pumborder` 统一为 `rounded`；诊断浮窗同样使用 rounded border，并只在多来源时显示 source。
+- 诊断行内提示使用 Neovim 原生 `virtual_text` + `virt_text_pos = "inline"`，避免额外诊断显示插件。
 
 ---
 
