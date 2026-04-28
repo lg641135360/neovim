@@ -11,6 +11,7 @@
 - 🧩 **LSP-centric** – 以原生 LSP 为核心，而非 IDE 模拟
 - ⚡ **blink-cmp** – 极速、简洁的补全体验
 - 🍿 **snacks.nvim** – Picker / UI / Notifier 一体化方案
+- 🧭 **Neovim 0.12 defaults** – 优先使用内置 `gc/gcc` 注释与 LSP 默认能力
 - 🎨 **Clean UI** – 克制、透明、可读性优先
 - 🛠 **Highly modular** – 插件按功能拆分，易维护
 
@@ -30,6 +31,16 @@
   - server-specific settings
 
 > 目标：**让编辑器理解代码，而不是堆插件**
+
+---
+
+### 🔹 Neovim 0.12 defaults
+
+- 注释优先使用 Neovim 内置 `gc` / `gcc`。
+- LSP 默认键位包括 `grn`、`gra`、`grr`、`gri`、`grt`、`grx`、`gO`。
+- 当前保留旧 alias：`<leader>rn`、`<leader>ca`、`K`。
+- 当前 `gr` 仍由 `snacks.nvim` 作为 references 入口，并带 `nowait = true`；完整切换到 `gr*` 默认键位族需要单独整理。
+- `<leader>rn` 同时存在 IncRename 全局映射与 LSP buffer-local rename 映射，后者在 LSP buffer 中优先。
 
 ---
 
@@ -78,7 +89,6 @@ lua/plugins/snacks.lua
 ```text
 .
 ├── init.lua                 # 入口
-├── lazyvim.json             # lazy.nvim 相关配置
 ├── lazy-lock.json           # 插件锁定文件
 ├── stylua.toml              # Lua 格式化配置
 ├── lua/
@@ -127,7 +137,7 @@ lua/plugins/snacks.lua
 
 ## 🖥 Requirements | 环境要求
 
-* Neovim **≥ 0.9 / 0.10**
+* Neovim **0.12.x**
 * Git
 * Node / Python / C/C++ toolchain（视语言而定）
 
@@ -149,4 +159,3 @@ Steal whatever you like, ignore the rest.
 
 这是一份**有明确取舍的配置**，
 不是“什么都要”的大杂烩。
-

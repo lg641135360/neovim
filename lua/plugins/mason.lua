@@ -1,3 +1,12 @@
+local function is_headless()
+  for _, arg in ipairs(vim.v.argv or {}) do
+    if arg == "--headless" then
+      return true
+    end
+  end
+  return false
+end
+
 return {
   {
     "williamboman/mason.nvim",
@@ -11,30 +20,26 @@ return {
         },
       },
     },
-    build = ":MasonUpdate",
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = { "williamboman/mason.nvim" },
-    opts = {
-      -- 禁用 automatic_enable，因为我们在 lsp.lua 中手动配置服务器
-      automatic_enable = false,
-    },
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     dependencies = { "williamboman/mason.nvim" },
-    opts = {
-      ensure_installed = {
-        "stylua",
-        "black",
-        "isort",
-        "prettier",
-        "clang-format",
-        "jq",
-        "shfmt",
-        "tex-fmt",
-      },
-    },
+    opts = function()
+      return {
+        ensure_installed = {
+          "stylua",
+          "black",
+          "isort",
+          "prettier",
+          "clang-format",
+          "jq",
+          "shfmt",
+          "tex-fmt",
+        },
+        -- 正常打开 Neovim 时自动补齐工具；headless 测试/脚本启动时避免触发安装。
+        run_on_start = not is_headless(),
+        start_delay = 3000,
+      }
+    end,
   },
 }

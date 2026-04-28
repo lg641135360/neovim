@@ -23,13 +23,4 @@ return {
     end,
   },
 
-  -- Neovim 0.12 内置了 gc/gcc 注释映射，不再让 Comment.nvim 覆盖它。
-  {
-    "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup({
-        mappings = false,
-      })
-    end,
-  },
 }
