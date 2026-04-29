@@ -1,11 +1,4 @@
 return {
-  -- 状态栏
-  {
-    "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {},
-  },
-
   -- 语法高亮 & Treesitter
   {
     "nvim-treesitter/nvim-treesitter",

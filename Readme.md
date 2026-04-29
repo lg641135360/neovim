@@ -10,8 +10,8 @@
 - 🚀 **Plugin management** – 使用 `lazy.nvim` 管理插件；核心 UX 插件多为 eager，以稳定日常 UX，个别插件通过 `event` / `cmd` / `ft` / `keys` 延迟加载
 - 🧩 **LSP-centric** – 以原生 LSP 为核心，而非 IDE 模拟
 - ⚡ **blink-cmp** – 极速、简洁的补全体验
-- 🍿 **snacks.nvim** – Picker / UI / Notifier 一体化方案
-- 🧭 **Neovim 0.12 defaults** – 优先使用内置 `gc/gcc` 注释与 LSP 默认能力
+- 🍿 **snacks.nvim** – Picker / UI / Notifier / input 一体化方案
+- 🧭 **Neovim 0.12 defaults** – 优先使用内置 `gc/gcc` 注释、LSP 默认能力与原生 cmdline/messages
 - ⌨️ **Documented keymaps** – 用户可感知快捷键改动必须同步记录
 - 🎨 **Clean UI** – Catppuccin Mocha，克制、低噪音、可读性优先
 - 🛠 **Highly modular** – 插件按功能拆分，易维护
@@ -46,6 +46,8 @@
 - `grr` 使用 `snacks.nvim` references picker，对齐 Neovim 0.12 references 默认语义。
 - `<leader>rn` 现在只作为 LSP buffer-local rename alias，和 `grn` 一起调用 Neovim 原生 rename。
 - 浮窗与补全菜单默认使用 0.12 `winborder` / `pumborder` 统一为 `rounded`；诊断浮窗同样使用 rounded border，并只在多来源时显示 source。
+- Noice 已由 Neovim 原生 cmdline/messages + 0.12 border defaults 替代；通知与输入类 UI 继续由 `snacks.nvim` notifier / input 承担。
+- 状态栏使用 Neovim 原生 `statusline` + `laststatus=3`，显示 mode、文件名、modified/readonly、diagnostic counts、filetype 与位置。
 - 诊断行内提示使用 Neovim 原生 `virtual_text` + `virt_text_pos = "inline"`，避免额外诊断显示插件；diagnostic signs 关闭，`virtual_lines` 关闭。
 
 ---
@@ -74,7 +76,7 @@
 | `<leader>w` / `<leader>q` | 保存 / 关闭窗口 |
 | `<leader>e` | 切换 Neo-tree |
 | `<leader>ft` | 打开自定义浮动终端 |
-| `<leader>xx` | 切换 Trouble diagnostics |
+| `<leader>xx` | 打开 Neovim 原生 diagnostics quickfix |
 | `<leader>th` | LSP buffer 内切换 inlay hints（server 支持时） |
 | `<Esc>` | 普通模式清除搜索高亮；终端模式回到普通模式 |
 | `<C-a>` | 普通模式全选 |
@@ -111,6 +113,7 @@
   - telescope
   - notify
   - 部分 UI 插件
+- Noice 移除后，snacks.nvim 继续提供 Notifier / input；命令行与 messages 回到 Neovim 原生实现。
 
 主要功能：
 - Picker（文件 / LSP / Git）
@@ -149,7 +152,7 @@
   - C / C++: `clang-format`
   - TeX: `tex-fmt`
 - DAP 当前未启用；`lua/plugins/dap.lua` 保留为空配置占位。
-- Trouble diagnostics 通过 `folke/trouble.nvim` 按 `:Trouble` 命令懒加载，保留 `<leader>xx` 既有语义。
+- `<leader>xx` 使用 Neovim 原生 `vim.diagnostic.setqflist({ open = true })` 打开 diagnostics quickfix；`<leader>sd` 仍保留 snacks diagnostics picker。
 
 ---
 
@@ -183,7 +186,7 @@
 | LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim`, `mason-lspconfig.nvim` |
 | Tooling     | `mason-tool-installer.nvim` |
 | Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`, `lspkind.nvim` |
-| UI / Picker | `snacks.nvim`, `noice.nvim`, `lualine.nvim`, `bufferline.nvim` |
+| UI / Picker | `snacks.nvim`, `bufferline.nvim`；Noice / Trouble / lualine 已移除，cmdline/messages、diagnostics quickfix 与 statusline 使用 Neovim 原生实现 |
 | Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |
 | Outline     | `aerial.nvim` |

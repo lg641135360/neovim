@@ -13,6 +13,50 @@ vim.opt.laststatus = 3
 vim.opt.winborder = "rounded"
 vim.opt.pumborder = "rounded"
 
+local mode_labels = {
+  n = "NORMAL",
+  no = "OP-PENDING",
+  i = "INSERT",
+  v = "VISUAL",
+  V = "V-LINE",
+  [""] = "V-BLOCK",
+  c = "COMMAND",
+  s = "SELECT",
+  S = "S-LINE",
+  ["9"] = "S-BLOCK",
+  R = "REPLACE",
+  t = "TERMINAL",
+}
+
+local function statusline_diagnostics()
+  local counts = vim.diagnostic.count(0)
+  local severity = vim.diagnostic.severity
+  local items = {
+    "E:" .. tostring(counts[severity.ERROR] or 0),
+    "W:" .. tostring(counts[severity.WARN] or 0),
+    "I:" .. tostring(counts[severity.INFO] or 0),
+    "H:" .. tostring(counts[severity.HINT] or 0),
+  }
+  return table.concat(items, " ")
+end
+
+function _G.nvim_native_statusline()
+  local mode = mode_labels[vim.api.nvim_get_mode().mode] or vim.api.nvim_get_mode().mode:upper()
+  local filetype = vim.bo.filetype ~= "" and vim.bo.filetype or "noft"
+  return table.concat({
+    " ",
+    mode,
+    " %t%m%r",
+    "%=",
+    statusline_diagnostics(),
+    " ",
+    filetype,
+    " %p%% %l:%c ",
+  })
+end
+
+vim.opt.statusline = "%!v:lua.nvim_native_statusline()"
+
 -- 禁止自动注释续行
 vim.opt.formatoptions:remove({ "c", "r", "o" })
 

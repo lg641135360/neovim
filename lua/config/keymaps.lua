@@ -141,8 +141,10 @@ map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 local float_term = require("customs.float_trem")
 map("n", "<leader>ft", float_term.open, opts)
 
--- 打开诊断窗口
-map("n", "<leader>xx", ":Trouble diagnostics toggle<CR>", opts)
+-- 打开原生 diagnostics quickfix 列表
+map("n", "<leader>xx", function()
+  vim.diagnostic.setqflist({ open = true })
+end, opts_with_desc("Diagnostics quickfix"))
 
 -- 在你的 keymaps.lua 中添加
 map("v", "<Tab>", ">", opts)
