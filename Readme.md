@@ -193,6 +193,7 @@
 | Outline     | Neovim 原生 `gO` / `<leader>o` document symbols |
 | Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
 | Formatting  | `conform.nvim` |
+| File headers | 自动文件头插件默认不启用；如需模板请使用项目级 snippets / skeleton 单独配置 |
 | Git         | `gitsigns.nvim` + snacks git pickers |
 | Editing     | `nvim-autopairs`, `nvim-colorizer.lua`；滚动使用 Neovim 原生命令 |
 | Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
