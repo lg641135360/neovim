@@ -7,13 +7,13 @@
 
 ## ✨ Features | 特性
 
-- 🚀 **Fast startup** – 基于 `lazy.nvim` 的按需加载
+- 🚀 **Plugin management** – 使用 `lazy.nvim` 管理插件；核心 UX 插件多为 eager，以稳定日常 UX，个别插件通过 `event` / `cmd` / `ft` / `keys` 延迟加载
 - 🧩 **LSP-centric** – 以原生 LSP 为核心，而非 IDE 模拟
 - ⚡ **blink-cmp** – 极速、简洁的补全体验
 - 🍿 **snacks.nvim** – Picker / UI / Notifier 一体化方案
 - 🧭 **Neovim 0.12 defaults** – 优先使用内置 `gc/gcc` 注释与 LSP 默认能力
 - ⌨️ **Documented keymaps** – 用户可感知快捷键改动必须同步记录
-- 🎨 **Clean UI** – 克制、透明、可读性优先
+- 🎨 **Clean UI** – Catppuccin Mocha，克制、低噪音、可读性优先
 - 🛠 **Highly modular** – 插件按功能拆分，易维护
 
 ---
@@ -149,6 +149,7 @@
   - C / C++: `clang-format`
   - TeX: `tex-fmt`
 - DAP 当前未启用；`lua/plugins/dap.lua` 保留为空配置占位。
+- Trouble diagnostics 通过 `folke/trouble.nvim` 按 `:Trouble` 命令懒加载，保留 `<leader>xx` 既有语义。
 
 ---
 
@@ -183,6 +184,7 @@
 | Tooling     | `mason-tool-installer.nvim` |
 | Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`, `lspkind.nvim` |
 | UI / Picker | `snacks.nvim`, `noice.nvim`, `lualine.nvim`, `bufferline.nvim` |
+| Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |
 | Outline     | `aerial.nvim` |
 | Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
