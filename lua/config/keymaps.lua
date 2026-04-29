@@ -146,6 +146,9 @@ map("n", "<leader>xx", function()
   vim.diagnostic.setqflist({ open = true })
 end, opts_with_desc("Diagnostics quickfix"))
 
+-- 打开 Neovim 原生 LSP document symbols outline
+map("n", "<leader>o", vim.lsp.buf.document_symbol, opts_with_desc("Document symbols outline"))
+
 -- 在你的 keymaps.lua 中添加
 map("v", "<Tab>", ">", opts)
 map("v", "<S-Tab>", "<", opts) -- Shift+Tab 减少缩进

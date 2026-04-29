@@ -77,6 +77,7 @@
 | `<leader>e` | 切换 Neo-tree |
 | `<leader>ft` | 打开自定义浮动终端 |
 | `<leader>xx` | 打开 Neovim 原生 diagnostics quickfix |
+| `<leader>o` | 打开 Neovim 原生 LSP document symbols outline（同类默认入口：`gO`） |
 | `<leader>th` | LSP buffer 内切换 inlay hints（server 支持时） |
 | `<Esc>` | 普通模式清除搜索高亮；终端模式回到普通模式 |
 | `<C-a>` | 普通模式全选 |
@@ -189,7 +190,7 @@
 | UI / Picker | `snacks.nvim`, `bufferline.nvim`；Noice / Trouble / lualine 已移除，cmdline/messages、diagnostics quickfix 与 statusline 使用 Neovim 原生实现 |
 | Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |
-| Outline     | `aerial.nvim` |
+| Outline     | Neovim 原生 `gO` / `<leader>o` document symbols |
 | Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
 | Formatting  | `conform.nvim` |
 | Git         | `gitsigns.nvim` + snacks git pickers |
