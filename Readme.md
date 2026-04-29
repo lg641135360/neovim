@@ -12,6 +12,7 @@
 - ⚡ **blink-cmp** – 极速、简洁的补全体验
 - 🍿 **snacks.nvim** – Picker / UI / Notifier 一体化方案
 - 🧭 **Neovim 0.12 defaults** – 优先使用内置 `gc/gcc` 注释与 LSP 默认能力
+- ⌨️ **Documented keymaps** – 用户可感知快捷键改动必须同步记录
 - 🎨 **Clean UI** – 克制、透明、可读性优先
 - 🛠 **Highly modular** – 插件按功能拆分，易维护
 
@@ -22,7 +23,7 @@
 ### 🔹 LSP (Language Server Protocol)
 
 - 使用 **Neovim 内置 LSP**，配置主线对齐 0.12 `vim.lsp.config()` / `vim.lsp.enable()`
-- `mason.nvim` 负责 LSP / Formatter / DAP 管理
+- `mason.nvim` 负责 LSP 工具链入口，`mason-tool-installer.nvim` 负责常用 formatter 工具补齐
 - `nvim-lspconfig` 保留为 server config 数据来源，不再使用旧的 `lspconfig.SERVER.setup()` 主线
 - `lsp.lua` 统一配置：
   - `blink.cmp` LSP capabilities
@@ -30,6 +31,8 @@
   - inlay hints
   - server-specific settings
   - `lua_ls` 显式声明 Neovim LuaJIT runtime、`vim` global 与 runtime `workspace.library`，不再依赖旧 `neodev.nvim` hook
+- 启用的 server：`lua_ls`、`clangd`、`pyright`、`ts_ls`
+- Mason 工具自动安装仅在交互式 Neovim 启动时运行；headless 测试 / 脚本启动会跳过自动安装，避免网络和写入副作用
 
 > 目标：**让编辑器理解代码，而不是堆插件**
 
@@ -43,15 +46,41 @@
 - `grr` 使用 `snacks.nvim` references picker，对齐 Neovim 0.12 references 默认语义。
 - `<leader>rn` 现在只作为 LSP buffer-local rename alias，和 `grn` 一起调用 Neovim 原生 rename。
 - 浮窗与补全菜单默认使用 0.12 `winborder` / `pumborder` 统一为 `rounded`；诊断浮窗同样使用 rounded border，并只在多来源时显示 source。
-- 诊断行内提示使用 Neovim 原生 `virtual_text` + `virt_text_pos = "inline"`，避免额外诊断显示插件。
+- 诊断行内提示使用 Neovim 原生 `virtual_text` + `virt_text_pos = "inline"`，避免额外诊断显示插件；diagnostic signs 关闭，`virtual_lines` 关闭。
 
 ---
 
 ### 🔹 Editing keymaps
 
-- `<A-Up>` / `<A-Down>`：普通模式移动当前行，visual 模式移动选中的多行。
-- `<S-A-Up>` / `<S-A-Down>`：普通模式复制当前行到上方 / 下方，visual 模式复制选中的多行到上方 / 下方。
+| 快捷键 | 模式 | 行为 |
+|--------|------|------|
+| `<A-Up>` / `<A-Down>` | Normal | 移动当前行上 / 下 |
+| `<A-Up>` / `<A-Down>` | Visual | 移动选中的多行上 / 下 |
+| `<S-A-Up>` / `<S-A-Down>` | Normal | 复制当前行到上方 / 下方 |
+| `<S-A-Up>` / `<S-A-Down>` | Visual | 复制选中的多行到上方 / 下方 |
+
 - 行移动与复制使用本地 Lua buffer 操作，不依赖额外插件，也不通过默认寄存器实现。
+- 终端必须能把这些组合键传给 Neovim；当前仓库的 Alacritty Linux / macOS profile 已显式发送对应 xterm modifier 序列。
+
+### 🔹 Daily keymaps
+
+| 快捷键 | 行为 |
+|--------|------|
+| `<leader><PageDown>` / `<leader><PageUp>` | BufferLine 下一个 / 上一个 buffer |
+| `<leader>1` ... `<leader>9` | 跳到对应序号 buffer |
+| `<leader>c` | 强制删除当前 buffer |
+| `<leader>tb` | 显示 / 隐藏 bufferline |
+| `<leader><Left/Down/Up/Right>` | 在窗口间按方向移动 |
+| `<leader>w` / `<leader>q` | 保存 / 关闭窗口 |
+| `<leader>e` | 切换 Neo-tree |
+| `<leader>ft` | 打开自定义浮动终端 |
+| `<leader>xx` | 切换 Trouble diagnostics |
+| `<leader>th` | LSP buffer 内切换 inlay hints（server 支持时） |
+| `<Esc>` | 普通模式清除搜索高亮；终端模式回到普通模式 |
+| `<C-a>` | 普通模式全选 |
+| `<C-c>` / `<C-x>` / `<C-v>` | 使用系统剪贴板复制 / 剪切 / 粘贴 |
+| `vv` / `vc` / `vl` | 选择匹配块 / 当前词 / 当前行 |
+| Visual `<Tab>` / `<S-Tab>` | 增加 / 减少缩进 |
 
 ---
 
@@ -63,6 +92,12 @@
   - 更快
   - 更少魔法
   - 更清晰的 source 管理
+- 默认 sources：`lsp`、`path`、`snippets`、`buffer`
+- 关键键位：
+  - `<Tab>` / `<S-Tab>`：补全菜单中选择下一项 / 上一项，或跳转 snippet 占位符
+  - `<CR>`：接受当前补全项
+  - `<C-space>`：显示补全和文档
+  - `<C-k>`：显示 / 隐藏 signature help
 
 配置文件：
 `lua/plugins/blink-cmp.lua`
@@ -81,9 +116,39 @@
 - Picker（文件 / LSP / Git）
 - Notifier
 - Indent / UI enhancements
+- Dashboard / input / scope
+
+常用入口：
+
+| 快捷键 | 行为 |
+|--------|------|
+| `<leader>ff` / `<leader>fg` | 查找文件 / grep |
+| `<leader>fb` / `<leader>fr` / `<leader>fp` | buffers / recent / projects |
+| `<leader>:` / `<leader>/` | command history / search history |
+| `<leader>sd` | diagnostics |
+| `gd` / `gD` / `grr` / `gI` / `gy` | definitions / declarations / references / implementations / type definitions |
+| `gai` / `gao` | incoming / outgoing calls |
+| `<leader>ss` / `<leader>sS` | document symbols / workspace symbols |
+| `<leader>gs` / `<leader>gd` | git status / git diff hunks |
+| `<leader>nh` | notification history |
 
 配置文件：
 `lua/plugins/snacks.lua`
+
+---
+
+### 🔹 Tools / Formatting
+
+- `mason-tool-installer.nvim` 在非 headless 启动时延迟安装：`stylua`、`black`、`isort`、`prettier`、`clang-format`、`jq`、`shfmt`、`tex-fmt`。
+- `conform.nvim` 负责 formatter 映射：
+  - Lua: `stylua`
+  - Python: `black`
+  - JavaScript / TypeScript / JSONC / HTML / CSS: `prettier`
+  - JSON: `jq`
+  - Shell: `shfmt`
+  - C / C++: `clang-format`
+  - TeX: `tex-fmt`
+- DAP 当前未启用；`lua/plugins/dap.lua` 保留为空配置占位。
 
 ---
 
@@ -105,23 +170,28 @@
 │       ├── theme.lua
 │       ├── formatter.lua
 │       └── ...
-└── README.md
+└── Readme.md
 ```
 
 ---
 
 ## 🔌 Plugins Overview | 插件概览
 
-| Category    | Plugin                         |
-| ----------- | ------------------------------ |
-| LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim` |
-| Completion  | `blink-cmp`                    |
-| UI / Picker | `snacks.nvim`                  |
-| File Tree   | `neo-tree.nvim`                |
-| Debug       | `nvim-dap`                     |
-| Syntax      | `nvim-treesitter`              |
-| Formatting  | `conform.nvim` / formatter     |
-| Git         | 内置 + snacks picker             |
+| Category    | Plugin / 状态 |
+| ----------- | ------------- |
+| LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim`, `mason-lspconfig.nvim` |
+| Tooling     | `mason-tool-installer.nvim` |
+| Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`, `lspkind.nvim` |
+| UI / Picker | `snacks.nvim`, `noice.nvim`, `lualine.nvim`, `bufferline.nvim` |
+| File Tree   | `neo-tree.nvim` |
+| Outline     | `aerial.nvim` |
+| Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
+| Formatting  | `conform.nvim` |
+| Git         | `gitsigns.nvim` + snacks git pickers |
+| Editing     | `nvim-autopairs`, `neoscroll.nvim`, `nvim-colorizer.lua` |
+| Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
+| AI          | `avante.nvim` |
+| Debug       | DAP 当前未启用 |
 
 ---
 
