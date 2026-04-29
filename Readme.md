@@ -194,7 +194,7 @@
 | Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
 | Formatting  | `conform.nvim` |
 | Git         | `gitsigns.nvim` + snacks git pickers |
-| Editing     | `nvim-autopairs`, `neoscroll.nvim`, `nvim-colorizer.lua` |
+| Editing     | `nvim-autopairs`, `nvim-colorizer.lua`；滚动使用 Neovim 原生命令 |
 | Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
 | AI          | `avante.nvim` |
 | Debug       | DAP 当前未启用 |
