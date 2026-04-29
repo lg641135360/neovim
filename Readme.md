@@ -47,6 +47,14 @@
 
 ---
 
+### 🔹 Editing keymaps
+
+- `<A-Up>` / `<A-Down>`：普通模式移动当前行，visual 模式移动选中的多行。
+- `<S-A-Up>` / `<S-A-Down>`：普通模式复制当前行到上方 / 下方，visual 模式复制选中的多行到上方 / 下方。
+- 行移动与复制使用本地 Lua buffer 操作，不依赖额外插件，也不通过默认寄存器实现。
+
+---
+
 ### 🔹 Completion – blink-cmp
 
 - 使用 [`blink-cmp`](https://github.com/Saghen/blink.cmp)
