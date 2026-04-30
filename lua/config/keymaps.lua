@@ -36,7 +36,34 @@ map("n", "<leader><Right>", "<C-w>l", opts) -- 移动到右边窗口
 
 -- 文件操作
 map("n", "<leader>w", ":w<CR>", opts) -- 保存
-map("n", "<leader>q", ":q<CR>", opts) -- 关闭
+map({ "n", "i", "v" }, "<C-s>", "<cmd>write<CR>", opts_with_desc("Save file")) -- 快速保存
+local function is_empty_unnamed_buffer(bufnr)
+  if vim.bo[bufnr].buftype ~= "" or vim.bo[bufnr].modified then
+    return false
+  end
+
+  if vim.api.nvim_buf_get_name(bufnr) ~= "" then
+    return false
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  return #lines == 1 and lines[1] == ""
+end
+
+local function close_current_buffer()
+  local bufnr = vim.api.nvim_get_current_buf()
+  if is_empty_unnamed_buffer(bufnr) then
+    vim.cmd.quit()
+    return
+  end
+
+  local ok, err = pcall(vim.cmd.bdelete)
+  if not ok then
+    vim.notify(tostring(err), vim.log.levels.WARN)
+  end
+end
+
+map("n", "<leader>q", close_current_buffer, opts_with_desc("Close current buffer")) -- 关闭当前文件，不退出 Neovim
 
 -- 在终端模式中按 Esc 直接退出到普通模式
 map("t", "<Esc>", [[<C-\><C-n>]], opts)

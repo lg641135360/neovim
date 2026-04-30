@@ -48,7 +48,21 @@ return {
 
     notifier = {
       enabled = true,
-      timeout = 2000,
+      timeout = 8000,
+      width = { min = 50, max = 0.7 },
+      height = { min = 1, max = 0.8 },
+    },
+
+    styles = {
+      notification = {
+        wo = {
+          wrap = true,
+        },
+      },
+      notification_history = {
+        width = 0.8,
+        height = 0.8,
+      },
     },
 
     scope = { enabled = true },

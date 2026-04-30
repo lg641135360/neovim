@@ -35,7 +35,7 @@ return {
         -- 窗口 & 快捷键
         window = {
           position = "left", -- 左侧 sidebar
-          width = 0.15, -- 固定宽度
+          width = 40, -- 固定宽度（整数列数，避免 nvim_win_set_width 收到小数）
         },
 
         -- 可选：启用 source selector（winbar 或 statusline）
