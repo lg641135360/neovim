@@ -10,6 +10,7 @@
 - `<leader>` 是空格键，也就是下文的 `<leader>x` 等价于 `Space` 后再按 `x`。
 - 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件，`<leader>fg` 全项目搜索。
 - 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
+- 位置历史：`<A-Left>` / `<A-Right>` 像 VSCode 一样在 jumplist 中后退 / 前进。
 - 命令行体验：`:` / `/` / `?` 使用 Noice 的 `cmdline_popup` 浮动命令行。
 
 ---
@@ -80,6 +81,7 @@
 | --- | --- | --- |
 | `gd` | Normal | 跳转 definition |
 | `gD` | Normal | 跳转 declaration |
+| `<A-Left>` / `<A-Right>` | Normal | 位置历史后退 / 前进，对应 Vim jumplist 的 `<C-o>` / `<C-i>` |
 | `grr` | Normal | references picker |
 | `gI` | Normal | implementations picker |
 | `gy` | Normal | type definition picker |
@@ -91,6 +93,7 @@
 | `<leader>th` | LSP buffer | server 支持时切换 inlay hints |
 | `K` | LSP buffer | hover documentation |
 | `<leader>xx` | Normal | 打开 Neovim 原生 diagnostics quickfix |
+| `:lua =vim.lsp.get_clients({bufnr=0})` / `:lsp restart clangd` | Command | 查看当前 buffer 的 LSP client；clangd 已附着时重启 clangd |
 
 LSP 配置说明：
 - 使用 Neovim 内置 `vim.lsp.config()` / `vim.lsp.enable()`。
@@ -138,7 +141,7 @@ LSP 配置说明：
 
 说明：
 - 行移动与复制使用本地 Lua buffer 操作，不依赖插件，也不污染默认寄存器。
-- 终端必须能把 Alt 组合键传给 Neovim；当前仓库的 Alacritty Linux / macOS profile 已显式发送对应 xterm modifier 序列。
+- 终端必须能把 Alt 方向键组合传给 Neovim；当前仓库的 Alacritty Linux / macOS profile 已显式发送对应 xterm modifier 序列。
 - 滚动使用 Neovim 原生命令，不启用额外滚动插件。
 
 ---
@@ -171,14 +174,15 @@ LSP 配置说明：
 - `:CMakeUserPresetInit` 生成的默认 preset 名为 `nvim-debug`，`binaryDir = ${sourceDir}/build`，generator 为 Ninja。
 - 已有项目如果只有 `linux-base` 这类自定义 preset，直接执行 `:CMakeConfigure` 会自动选择它；也可以显式执行 `:CMakeConfigure linux-base`。`linux-build` 这类 build preset 不是 configure preset，但本配置会自动读取它的 `configurePreset` 字段。
 - 配合当前 clangd 的 `--compile-commands-dir=build`，项目 CMake 已启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 时会生成 `build/compile_commands.json`。
-- 如果 clangd 诊断没有刷新，可执行 `:LspRestart clangd`。
+- 如果 clangd 诊断或跳转结果没有刷新，先执行 `:lua =vim.lsp.get_clients({bufnr=0})` 确认当前 buffer 已有 `clangd` client；已附着时再执行 `:lsp restart clangd`。若提示 `no active clients named clangd`，说明 clangd 当前没有附着到这个 buffer。
+- `filetype=cpp` 但 client 仍是 `{}` 时，继续检查：`:lua print(vim.lsp.is_enabled("clangd"))`、`:lua print(vim.fn.executable("clangd"), vim.fn.exepath("clangd"))`、`:lua =vim.fs.root(0, {"CMakeLists.txt", "CMakePresets.json", "CMakeUserPresets.json", "compile_commands.json", ".git"})`；若 `executable("clangd") = 0`，先安装 clangd 并让它进入 Neovim 的 `PATH`，例如在 `wh_fabric_build` 上使用 `~/.local/bin/clangd -> /home/fm/code/clangd/clangd_20.1.0/bin/clangd` 软链；修复后重启 Neovim 或对该文件执行 `:edit` 触发重新 attach。
 
 ---
 
 ## 九、工具链 / 格式化
 
 - `mason.nvim` 负责 LSP 工具链入口。
-- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用工具；headless 测试 / 脚本启动会跳过自动安装，避免网络和写入副作用。
+- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装，避免网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
 - `conform.nvim` 负责格式化：Lua 使用 `stylua`，Python 使用 `black` / `isort`，Web/JSONC 使用 `prettier`，JSON 使用 `jq`，Shell 使用 `shfmt`，C/C++ 使用 `clang-format`，TeX 使用 `tex-fmt`。
 - DAP 当前未启用，默认不加载调试插件；如需调试能力应单独添加项目级配置。
 - 自动文件头不启用；如需模板请使用项目级 snippets / skeleton 单独配置。

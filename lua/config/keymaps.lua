@@ -17,6 +17,19 @@ map("n", "<leader><PageUp>", function()
   _G.nvim_native_buffer_cycle(-1)
 end, opts_with_desc("Previous buffer"))
 
+-- VSCode 风格位置历史：后退 / 前进
+local function normal_key(keys)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), "nx", false)
+end
+
+map("n", "<A-Left>", function()
+  normal_key("<C-o>")
+end, opts_with_desc("Jump back"))
+
+map("n", "<A-Right>", function()
+  normal_key("<C-i>")
+end, opts_with_desc("Jump forward"))
+
 -- 快速跳转到指定 Tab（1~9）
 for i = 1, 9 do
   local index = i

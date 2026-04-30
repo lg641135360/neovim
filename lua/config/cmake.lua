@@ -196,7 +196,7 @@ function M.configure(opts)
     vim.schedule(function()
       notify_command_result("Configure", result)
       if result.code == 0 then
-        vim.notify("compile_commands.json should now be available for clangd. Use :LspRestart clangd if diagnostics are stale.", vim.log.levels.INFO, { title = "CMake" })
+        vim.notify("compile_commands.json should now be available for clangd. Use :lua =vim.lsp.get_clients({bufnr=0}) to check active clients; if clangd is active, run :lsp restart clangd.", vim.log.levels.INFO, { title = "CMake" })
       end
     end)
   end)

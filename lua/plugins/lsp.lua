@@ -15,6 +15,8 @@ return {
         capabilities = blink.get_lsp_capabilities(),
       })
 
+      local servers = { "lua_ls", "clangd", "pyright", "ts_ls" }
+
       local lsp_keymaps = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true })
 
       vim.api.nvim_create_autocmd("LspAttach", {
@@ -71,6 +73,18 @@ return {
           "--function-arg-placeholders",
           "--fallback-style=llvm",
         },
+        root_markers = {
+          ".clangd",
+          ".clang-tidy",
+          ".clang-format",
+          "compile_commands.json",
+          "compile_flags.txt",
+          "configure.ac",
+          "CMakeLists.txt",
+          "CMakePresets.json",
+          "CMakeUserPresets.json",
+          ".git",
+        },
       })
 
       vim.lsp.config("pyright", {
@@ -93,12 +107,7 @@ return {
         automatic_enable = false,
       })
 
-      vim.lsp.enable({
-        "lua_ls",
-        "clangd",
-        "pyright",
-        "ts_ls",
-      })
+      vim.lsp.enable(servers)
     end,
   },
 }
