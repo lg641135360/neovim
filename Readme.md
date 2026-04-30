@@ -193,7 +193,7 @@
 | Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |
 | Outline     | Neovim 原生 `gO` / `<leader>o` document symbols |
-| Syntax      | `nvim-treesitter`, `nvim-treesitter-textobjects` |
+| Syntax      | `nvim-treesitter`；未配置额外 textobjects 插件，语法高亮 / 缩进由 Treesitter 本体负责 |
 | Formatting  | `conform.nvim` |
 | File headers | 自动文件头插件默认不启用；如需模板请使用项目级 snippets / skeleton 单独配置 |
 | Git         | `gitsigns.nvim` + snacks git pickers |
