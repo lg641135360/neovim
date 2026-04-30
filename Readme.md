@@ -117,6 +117,7 @@
   - notify
   - 部分 UI 插件
 - Noice 移除后，snacks.nvim 继续提供 Notifier / input；命令行与 messages 回到 Neovim 原生实现。
+- Dashboard 不启用，启动页回到 Neovim 原生空 buffer。
 
 主要功能：
 - Picker（文件 / LSP / Git）

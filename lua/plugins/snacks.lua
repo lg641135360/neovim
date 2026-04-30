@@ -52,7 +52,7 @@ return {
     },
 
     scope = { enabled = true },
-    dashboard = { enabled = true },
+    dashboard = { enabled = false },
     input = { enabled = true },
     animate = {},
   },
