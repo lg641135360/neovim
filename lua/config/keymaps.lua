@@ -63,6 +63,16 @@ local function close_current_buffer()
   end
 end
 
+vim.api.nvim_create_user_command("BufferClose", close_current_buffer, {
+  desc = "Close current buffer without quitting Neovim",
+  force = true,
+})
+
+vim.cmd([[
+cnoreabbrev <expr> q getcmdtype() ==# ':' && getcmdline() =~# '^\s*q\s*$' ? 'BufferClose' : 'q'
+cnoreabbrev <expr> quit getcmdtype() ==# ':' && getcmdline() =~# '^\s*quit\s*$' ? 'BufferClose' : 'quit'
+]])
+
 map("n", "<leader>q", close_current_buffer, opts_with_desc("Close current buffer")) -- 关闭当前文件，不退出 Neovim
 
 -- 在终端模式中按 Esc 直接退出到普通模式

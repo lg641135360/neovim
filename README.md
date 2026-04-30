@@ -9,7 +9,7 @@
 
 - `<leader>` 是空格键，也就是下文的 `<leader>x` 等价于 `Space` 后再按 `x`。
 - 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件，`<leader>fg` 全项目搜索。
-- 保存与关闭：`<C-s>` / `<leader>w` 保存，`<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
+- 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
 - 命令行体验：`:` / `/` / `?` 使用 Noice 的 `cmdline_popup` 浮动命令行。
 
 ---
@@ -41,14 +41,15 @@
 | --- | --- | --- |
 | `<C-s>` | Normal / Insert / Visual | 快速保存当前文件 |
 | `<leader>w` | Normal | 保存当前文件 |
+| `:q` / `:quit` | Command | 关闭当前文件 buffer，不退出 Neovim |
 | `<leader>q` | Normal | 关闭当前文件 buffer，不退出 Neovim |
 | `<leader>c` | Normal | 强制删除当前 buffer，丢弃未保存状态 |
 
-`<leader>q` 的细节：
+`:q` / `<leader>q` 的细节：
 - 使用 Lua 包装的 `:bdelete`，目标是“关闭当前文件”而不是关闭窗口。
-- 从 `nvim .` + Neo-tree 打开文件后，`<leader>q` 不会因为当前文件窗口是最后一个普通编辑窗口而退出整个 Neovim。
+- 从 `nvim .` + Neo-tree 打开文件后，`:q` / `<leader>q` 不会因为当前文件窗口是最后一个普通编辑窗口而退出整个 Neovim。
 - 如果当前文件有未保存修改，会把 Neovim 原生命令错误文本转给 Snacks 浮动通知显示，并取消关闭。
-- 如果当前是未命名、未修改的空 buffer，则 `<leader>q` 会直接退出 Neovim。
+- 如果当前是未命名、未修改的空 buffer，则 `:q` / `<leader>q` 会直接退出 Neovim。
 - 真正要退出已有文件会话时，使用 `:qa` / `:qall` 等显式退出命令。
 
 ---
