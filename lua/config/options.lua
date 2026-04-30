@@ -57,6 +57,47 @@ end
 
 vim.opt.statusline = "%!v:lua.nvim_native_statusline()"
 
+local function native_listed_buffers()
+  local buffers = {}
+  for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+    if vim.bo[info.bufnr].buftype == "" then
+      table.insert(buffers, info.bufnr)
+    end
+  end
+  if #buffers == 0 then
+    table.insert(buffers, vim.api.nvim_get_current_buf())
+  end
+  return buffers
+end
+
+function _G.nvim_native_buffer_goto(index)
+  local bufnr = native_listed_buffers()[index]
+  if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_set_current_buf(bufnr)
+  end
+end
+
+function _G.nvim_native_buffer_cycle(direction)
+  vim.cmd(direction > 0 and "bnext" or "bprevious")
+end
+
+function _G.nvim_native_tabline()
+  local current = vim.api.nvim_get_current_buf()
+  local parts = {}
+  for index, bufnr in ipairs(native_listed_buffers()) do
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    local label = name ~= "" and vim.fn.fnamemodify(name, ":t") or "[No Name]"
+    local modified = vim.bo[bufnr].modified and "●" or ""
+    local highlight = bufnr == current and "%#TabLineSel#" or "%#TabLine#"
+    table.insert(parts, ("%s%%%dT %d:%s%s %%T"):format(highlight, bufnr, index, label, modified))
+  end
+  table.insert(parts, "%#TabLineFill#%T")
+  return table.concat(parts, "")
+end
+
+vim.opt.showtabline = 2
+vim.opt.tabline = "%!v:lua.nvim_native_tabline()"
+
 -- 禁止自动注释续行
 vim.opt.formatoptions:remove({ "c", "r", "o" })
 

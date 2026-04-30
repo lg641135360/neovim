@@ -48,6 +48,7 @@
 - 浮窗与补全菜单默认使用 0.12 `winborder` / `pumborder` 统一为 `rounded`；诊断浮窗同样使用 rounded border，并只在多来源时显示 source。
 - Noice 已由 Neovim 原生 cmdline/messages + 0.12 border defaults 替代；通知与输入类 UI 继续由 `snacks.nvim` notifier / input 承担。
 - 状态栏使用 Neovim 原生 `statusline` + `laststatus=3`，显示 mode、文件名、modified/readonly、diagnostic counts、filetype 与位置。
+- Buffer 列表使用 Neovim 原生 `tabline` + `showtabline=2`，保留 `<leader><PageDown>` / `<leader><PageUp>`、`<leader>1..9` 与 `<leader>tb`。
 - 诊断行内提示使用 Neovim 原生 `virtual_text` + `virt_text_pos = "inline"`，避免额外诊断显示插件；diagnostic signs 关闭，`virtual_lines` 关闭。
 
 ---
@@ -68,10 +69,10 @@
 
 | 快捷键 | 行为 |
 |--------|------|
-| `<leader><PageDown>` / `<leader><PageUp>` | BufferLine 下一个 / 上一个 buffer |
+| `<leader><PageDown>` / `<leader><PageUp>` | 原生 buffer 下一个 / 上一个 |
 | `<leader>1` ... `<leader>9` | 跳到对应序号 buffer |
 | `<leader>c` | 强制删除当前 buffer |
-| `<leader>tb` | 显示 / 隐藏 bufferline |
+| `<leader>tb` | 显示 / 隐藏原生 tabline |
 | `<leader><Left/Down/Up/Right>` | 在窗口间按方向移动 |
 | `<leader>w` / `<leader>q` | 保存 / 关闭窗口 |
 | `<leader>e` | 切换 Neo-tree |
@@ -187,7 +188,7 @@
 | LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim`, `mason-lspconfig.nvim` |
 | Tooling     | `mason-tool-installer.nvim` |
 | Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`, `lspkind.nvim` |
-| UI / Picker | `snacks.nvim`, `bufferline.nvim`；Noice / Trouble / lualine 已移除，cmdline/messages、diagnostics quickfix 与 statusline 使用 Neovim 原生实现 |
+| UI / Picker | `snacks.nvim`；Noice / Trouble / lualine / bufferline 已移除，cmdline/messages、diagnostics quickfix、statusline 与 tabline 使用 Neovim 原生实现 |
 | Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |
 | Outline     | Neovim 原生 `gO` / `<leader>o` document symbols |

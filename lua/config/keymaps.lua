@@ -10,12 +10,19 @@ end
 vim.g.mapleader = " " -- 空格为 leader
 
 -- 下一个 / 上一个 Tab
-map("n", "<leader><PageDown>", ":BufferLineCycleNext<CR>", opts) -- 下一个 Tab
-map("n", "<leader><PageUp>", ":BufferLineCyclePrev<CR>", opts) -- 上一个 Tab
+map("n", "<leader><PageDown>", function()
+  _G.nvim_native_buffer_cycle(1)
+end, opts_with_desc("Next buffer"))
+map("n", "<leader><PageUp>", function()
+  _G.nvim_native_buffer_cycle(-1)
+end, opts_with_desc("Previous buffer"))
 
 -- 快速跳转到指定 Tab（1~9）
 for i = 1, 9 do
-  map("n", "<leader>" .. i, ":BufferLineGoToBuffer " .. i .. "<CR>", opts)
+  local index = i
+  map("n", "<leader>" .. index, function()
+    _G.nvim_native_buffer_goto(index)
+  end, opts_with_desc("Go to buffer " .. index))
 end
 
 -- 关闭当前 Tab
@@ -162,7 +169,7 @@ vim.keymap.set("n", "<leader>tb", function()
   else
     vim.o.showtabline = 0
   end
-end, { desc = "Toggle Bufferline" })
+end, { desc = "Toggle native tabline" })
 
 -- 普通模式下全选
 map("n", "<C-a>", "gg0vG$", opts)
