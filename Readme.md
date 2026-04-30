@@ -154,7 +154,7 @@
   - Shell: `shfmt`
   - C / C++: `clang-format`
   - TeX: `tex-fmt`
-- DAP 当前未启用；`lua/plugins/dap.lua` 保留为空配置占位。
+- DAP 当前未启用，默认不保留调试插件空配置；如需调试能力应单独添加项目级配置。
 - `<leader>xx` 使用 Neovim 原生 `vim.diagnostic.setqflist({ open = true })` 打开 diagnostics quickfix；`<leader>sd` 仍保留 snacks diagnostics picker。
 
 ---
@@ -172,7 +172,6 @@
 │       ├── lsp.lua
 │       ├── blink-cmp.lua
 │       ├── snacks.lua
-│       ├── dap.lua
 │       ├── ui.lua
 │       ├── theme.lua
 │       ├── formatter.lua
@@ -200,7 +199,7 @@
 | Editing     | `nvim-autopairs`；滚动使用 Neovim 原生命令；颜色预览插件默认不启用 |
 | Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
 | AI          | `avante.nvim` |
-| Debug       | DAP 当前未启用 |
+| Debug       | DAP 当前未启用，默认不加载调试插件 |
 
 ---
 
