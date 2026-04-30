@@ -97,6 +97,7 @@
   - 更少魔法
   - 更清晰的 source 管理
 - 默认 sources：`lsp`、`path`、`snippets`、`buffer`
+- Completion kind icons 使用本地映射；path source 继续通过 `nvim-web-devicons` 显示文件图标，不再依赖额外 kind icon 插件。
 - 关键键位：
   - `<Tab>` / `<S-Tab>`：补全菜单中选择下一项 / 上一项，或跳转 snippet 占位符
   - `<CR>`：接受当前补全项
@@ -187,7 +188,7 @@
 | ----------- | ------------- |
 | LSP         | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim`, `mason-lspconfig.nvim` |
 | Tooling     | `mason-tool-installer.nvim` |
-| Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`, `lspkind.nvim` |
+| Completion  | `blink-cmp`, `LuaSnip`, `friendly-snippets`；completion kind icons 使用本地映射 |
 | UI / Picker | `snacks.nvim`；Noice / Trouble / lualine / bufferline 已移除，cmdline/messages、diagnostics quickfix、statusline 与 tabline 使用 Neovim 原生实现 |
 | Theme       | `catppuccin` / Catppuccin Mocha（当前唯一 active theme；历史主题候选不再保留在 active config 中） |
 | File Tree   | `neo-tree.nvim` |

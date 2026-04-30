@@ -1,9 +1,36 @@
+local kind_icons = {
+  Text = "󰉿",
+  Method = "󰆧",
+  Function = "󰊕",
+  Constructor = "",
+  Field = "󰜢",
+  Variable = "󰀫",
+  Class = "󰠱",
+  Interface = "",
+  Module = "",
+  Property = "󰜢",
+  Unit = "󰑭",
+  Value = "󰎠",
+  Enum = "",
+  Keyword = "󰌋",
+  Snippet = "",
+  Color = "󰏘",
+  File = "󰈙",
+  Reference = "󰈇",
+  Folder = "󰉋",
+  EnumMember = "",
+  Constant = "󰏿",
+  Struct = "󰙅",
+  Event = "",
+  Operator = "󰆕",
+  TypeParameter = "󰊄",
+}
+
 return {
   "saghen/blink.cmp",
   -- optional: provides snippets for the snippet source
   dependencies = {
     "rafamadriz/friendly-snippets",
-    "onsails/lspkind-nvim",
     "nvim-tree/nvim-web-devicons",
     "L3MON4D3/LuaSnip",
   },
@@ -83,7 +110,7 @@ return {
                     icon = dev_icon
                   end
                 else
-                  icon = require("lspkind").symbol_map[ctx.kind] or ""
+                  icon = kind_icons[ctx.kind] or ctx.kind_icon or ""
                 end
 
                 return icon .. ctx.icon_gap
