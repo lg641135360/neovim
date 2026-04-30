@@ -164,11 +164,12 @@ LSP 配置说明：
 | --- | --- |
 | `:CMakeUserPresetInit` | 在当前 CMake 项目生成本地 `CMakeUserPresets.json` |
 | `:CMakeUserPresetInit!` | 强制覆盖生成本地 `CMakeUserPresets.json` |
-| `:CMakeConfigure` | 有 user preset 时执行 `cmake --preset nvim-debug`，否则 fallback 到 `cmake -S <root> -B <root>/build` |
-| `:CMakeConfigure {preset}` | 使用指定 preset configure |
+| `:CMakeConfigure` | 有 user preset 时自动使用 `nvim-debug`；若不存在则使用第一个 `configurePresets[].name`；否则 fallback 到 `cmake -S <root> -B <root>/build` |
+| `:CMakeConfigure {preset}` | 使用指定 configure preset；如果传入 build preset，会自动转到它的 `configurePreset` |
 
 说明：
-- 默认 preset 名为 `nvim-debug`，`binaryDir = ${sourceDir}/build`，generator 为 Ninja。
+- `:CMakeUserPresetInit` 生成的默认 preset 名为 `nvim-debug`，`binaryDir = ${sourceDir}/build`，generator 为 Ninja。
+- 已有项目如果只有 `linux-base` 这类自定义 preset，直接执行 `:CMakeConfigure` 会自动选择它；也可以显式执行 `:CMakeConfigure linux-base`。`linux-build` 这类 build preset 不是 configure preset，但本配置会自动读取它的 `configurePreset` 字段。
 - 配合当前 clangd 的 `--compile-commands-dir=build`，项目 CMake 已启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 时会生成 `build/compile_commands.json`。
 - 如果 clangd 诊断没有刷新，可执行 `:LspRestart clangd`。
 
