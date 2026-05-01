@@ -1,3 +1,12 @@
+local function is_headless()
+  for _, arg in ipairs(vim.v.argv or {}) do
+    if arg == "--headless" then
+      return true
+    end
+  end
+  return false
+end
+
 return {
   {
     "neovim/nvim-lspconfig",
@@ -103,9 +112,12 @@ return {
       vim.lsp.config("ts_ls", {})
 
       -- 保留 Mason 管理/安装关系，但让 lsp.lua 的 vim.lsp.enable 成为唯一启用来源。
-      mason_lspconfig.setup({
-        automatic_enable = false,
-      })
+      -- Headless 测试不刷新 Mason registry，避免网络/写入副作用。
+      if not is_headless() then
+        mason_lspconfig.setup({
+          automatic_enable = false,
+        })
+      end
 
       vim.lsp.enable(servers)
     end,

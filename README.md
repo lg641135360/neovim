@@ -11,6 +11,7 @@
 - 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件，`<leader>fg` 全项目搜索。
 - 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
 - 位置历史：`<A-Left>` / `<A-Right>` 像 VSCode 一样在 jumplist 中后退 / 前进。
+- 成对输入由本地 native pairs helper 处理基础括号/引号、空 pair 删除、闭合符跳过和空 pair 回车展开。
 - 命令行体验：`:` / `/` / `?` 使用 Noice 的 `cmdline_popup` 浮动命令行。
 
 ---
@@ -33,6 +34,7 @@
 - Buffer 列表使用 Neovim 原生 tabline，`showtabline=2`，不再依赖额外 tabline 插件。
 - 状态栏使用原生 `statusline` + `laststatus=3`，显示 mode、文件名、modified/readonly、diagnostic counts、filetype 与位置。
 - Neo-tree 左侧 sidebar 使用整数宽度 `40`，避免 Neovim 窗口 API 收到小数宽度。
+- Neo-tree 目前明确保留：隔离 netrw/native POC 无法同时满足 follow current file、Git status、hidden/gitignored 可见性等文件树 parity 要求，因此不为减少插件牺牲 `<leader>e` 左侧文件树体验。
 
 ---
 
@@ -118,6 +120,22 @@ LSP 配置说明：
 说明：
 - 使用 `blink-cmp`，默认 sources 为 `lsp`、`path`、`snippets`、`buffer`。
 - Completion kind icons 使用本地映射；path source 继续通过 `nvim-web-devicons` 显示文件图标。
+- `blink-cmp` 仍拥有补全菜单中的 `<Tab>` / `<S-Tab>` / `<CR>` 语义；native pairs helper 只在补全菜单不可见且光标位于空 pair 内时处理 `<CR>` 展开。
+
+---
+
+## 五点五、原生 pairs
+
+| 快捷键 | 模式 | 行为 |
+| --- | --- | --- |
+| `(` / `[` / `{` / `'` / `"` | Insert | 插入基础成对字符，并把光标停在 pair 中间 |
+| `<BS>` | Insert | 光标位于空 pair 中间时成对删除 |
+| `)` / `]` / `}` / `'` / `"` | Insert | 右侧已有匹配闭合符时跳过已有字符 |
+| `<CR>` | Insert | 在空 `()` / `[]` / `{}` 中展开中间空行；补全菜单可见时仍优先接受 `blink.cmp` 补全 |
+
+说明：
+- 行为来自 `lua/config/autopairs.lua` 的本地 Neovim 原生 helper，不再加载 `nvim-autopairs` 插件。
+- 该 helper 只覆盖本轮 POC 选中的最小 parity gate；如果未来需要 Treesitter / filetype-specific 规则，应单独评估，而不是把 helper 扩成第二套插件系统。
 
 ---
 
@@ -182,7 +200,7 @@ LSP 配置说明：
 ## 九、工具链 / 格式化
 
 - `mason.nvim` 负责 LSP 工具链入口。
-- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装，避免网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
+- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装和 Mason LSP registry refresh，避免网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
 - `conform.nvim` 负责格式化：Lua 使用 `stylua`，Python 使用 `black` / `isort`，Web/JSONC 使用 `prettier`，JSON 使用 `jq`，Shell 使用 `shfmt`，C/C++ 使用 `clang-format`，TeX 使用 `tex-fmt`。
 - DAP 当前未启用，默认不加载调试插件；如需调试能力应单独添加项目级配置。
 - 自动文件头不启用；如需模板请使用项目级 snippets / skeleton 单独配置。
@@ -199,12 +217,12 @@ LSP 配置说明：
 | Completion | `blink-cmp`, `LuaSnip`, `friendly-snippets`；completion kind icons 使用本地映射 |
 | UI / Picker | `snacks.nvim` + `noice.nvim` 窄配置；Noice 只负责 `cmdline_popup` 浮动命令行；diagnostics quickfix、statusline 与 tabline 使用 Neovim 原生实现 |
 | Theme | `catppuccin` / Catppuccin Mocha |
-| File Tree | `neo-tree.nvim`；整数宽度 `40` |
+| File Tree | `neo-tree.nvim`；整数宽度 `40`；保留 follow current file、Git status、hidden/gitignored 可见性 |
 | Outline | Neovim 原生 `gO` / `<leader>o` document symbols |
 | Syntax | `nvim-treesitter`；语法高亮 / 缩进由 Treesitter 本体负责 |
 | Formatting | `conform.nvim` |
 | Git | `gitsigns.nvim` + snacks git pickers |
-| Editing | `nvim-autopairs`；滚动使用 Neovim 原生实现 |
+| Editing | native pairs helper；滚动使用 Neovim 原生实现 |
 | Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
 | AI | `avante.nvim` |
 

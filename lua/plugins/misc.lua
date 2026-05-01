@@ -7,20 +7,4 @@ return {
     end,
   },
 
-  -- 自动括号匹配
-  {
-    "windwp/nvim-autopairs",
-    config = function()
-      require("nvim-autopairs").setup({
-        check_ts = true, -- 启用 Treesitter 检测语言
-        enable_check_bracket_line = true, -- 同一行避免重复括号
-      })
-
-      -- -- 集成 nvim-cmp
-      -- local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-      -- local cmp = require("cmp")
-      -- cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-    end,
-  },
-
 }
