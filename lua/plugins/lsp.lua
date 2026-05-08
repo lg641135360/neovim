@@ -1,23 +1,12 @@
-local function is_headless()
-  for _, arg in ipairs(vim.v.argv or {}) do
-    if arg == "--headless" then
-      return true
-    end
-  end
-  return false
-end
-
 return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
       "saghen/blink.cmp",
     },
     config = function()
-      local mason_lspconfig = require("mason-lspconfig")
       local blink = require("blink.cmp")
 
       vim.lsp.config("*", {
@@ -111,14 +100,7 @@ return {
 
       vim.lsp.config("ts_ls", {})
 
-      -- 保留 Mason 管理/安装关系，但让 lsp.lua 的 vim.lsp.enable 成为唯一启用来源。
-      -- Headless 测试不刷新 Mason registry，避免网络/写入副作用。
-      if not is_headless() then
-        mason_lspconfig.setup({
-          automatic_enable = false,
-        })
-      end
-
+      -- Mason 继续负责工具入口；LSP server 的启用权威只保留 Neovim 原生 vim.lsp.enable。
       vim.lsp.enable(servers)
     end,
   },

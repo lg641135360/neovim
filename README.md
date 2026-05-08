@@ -98,7 +98,7 @@
 | `:lua =vim.lsp.get_clients({bufnr=0})` / `:lsp restart clangd` | Command | 查看当前 buffer 的 LSP client；clangd 已附着时重启 clangd |
 
 LSP 配置说明：
-- 使用 Neovim 内置 `vim.lsp.config()` / `vim.lsp.enable()`。
+- 使用 Neovim 内置 `vim.lsp.config()` / `vim.lsp.enable()`；LSP server 的唯一启用权威是 `vim.lsp.enable()`。
 - 启用 server：`lua_ls`、`clangd`、`pyright`、`ts_ls`。
 - `<leader>rn` 只作为 LSP buffer-local rename alias，和 `grn` 一起调用 Neovim 原生 rename。
 - `grr` 使用 snacks.nvim references picker，对齐 Neovim 0.12 references 默认语义。
@@ -193,14 +193,25 @@ LSP 配置说明：
 - 已有项目如果只有 `linux-base` 这类自定义 preset，直接执行 `:CMakeConfigure` 会自动选择它；也可以显式执行 `:CMakeConfigure linux-base`。`linux-build` 这类 build preset 不是 configure preset，但本配置会自动读取它的 `configurePreset` 字段。
 - 配合当前 clangd 的 `--compile-commands-dir=build`，项目 CMake 已启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 时会生成 `build/compile_commands.json`。
 - 如果 clangd 诊断或跳转结果没有刷新，先执行 `:lua =vim.lsp.get_clients({bufnr=0})` 确认当前 buffer 已有 `clangd` client；已附着时再执行 `:lsp restart clangd`。若提示 `no active clients named clangd`，说明 clangd 当前没有附着到这个 buffer。
-- `filetype=cpp` 但 client 仍是 `{}` 时，继续检查：`:lua print(vim.lsp.is_enabled("clangd"))`、`:lua print(vim.fn.executable("clangd"), vim.fn.exepath("clangd"))`、`:lua =vim.fs.root(0, {"CMakeLists.txt", "CMakePresets.json", "CMakeUserPresets.json", "compile_commands.json", ".git"})`；若 `executable("clangd") = 0`，先安装 clangd 并让它进入 Neovim 的 `PATH`，例如在 `wh_fabric_build` 上使用 `~/.local/bin/clangd -> /home/fm/code/clangd/clangd_20.1.0/bin/clangd` 软链；修复后重启 Neovim 或对该文件执行 `:edit` 触发重新 attach。
+- `filetype=cpp` 但 client 仍是 `{}` 时，继续检查：`:lua print(vim.lsp.is_enabled("clangd"))`、`:lua print(vim.fn.executable("clangd"), vim.fn.exepath("clangd"))`、`:lua =vim.fs.root(0, {"CMakeLists.txt", "CMakePresets.json", "CMakeUserPresets.json", "compile_commands.json", ".git"})`；若 `executable("clangd") = 0`，先安装 clangd 并让它进入 Neovim 的 `PATH`。修复后重启 Neovim 或对该文件执行 `:edit` 触发重新 attach。
+- 新环境 clangd 入口约定：优先把机器/厂商特定 clangd 安装在任意版本化目录，再用 `~/.local/bin/clangd` 作为稳定入口软链；不要把 `/usr/local/musa/bin` 这类机器路径写进共享 dotfiles。示例：
+
+  ```bash
+  mkdir -p ~/.local/bin
+  ln -sf /path/to/clangd/bin/clangd ~/.local/bin/clangd
+  command -v clangd
+  clangd --version
+  nvim --headless -u NONE '+lua print(vim.fn.exepath("clangd"))' '+qa!'
+  ```
+
+  在 `wh_fabric_build` 上已验证 `~/.local/bin/clangd -> /home/fm/code/clangd/clangd_20.1.0/bin/clangd`。
 
 ---
 
 ## 九、工具链 / 格式化
 
-- `mason.nvim` 负责 LSP 工具链入口。
-- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装和 Mason LSP registry refresh，避免网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
+- `mason.nvim` 负责工具链入口；LSP server 启用由原生 `vim.lsp.enable()` 负责，不再通过 Mason LSP 桥接插件桥接。
+- `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装等 Mason 网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
 - `conform.nvim` 负责格式化：Lua 使用 `stylua`，Python 使用 `black` / `isort`，Web/JSONC 使用 `prettier`，JSON 使用 `jq`，Shell 使用 `shfmt`，C/C++ 使用 `clang-format`，TeX 使用 `tex-fmt`。
 - DAP 当前未启用，默认不加载调试插件；如需调试能力应单独添加项目级配置。
 - 自动文件头不启用；如需模板请使用项目级 snippets / skeleton 单独配置。
@@ -212,7 +223,7 @@ LSP 配置说明：
 
 | Category | Plugin / 状态 |
 | --- | --- |
-| LSP | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`, `mason.nvim`, `mason-lspconfig.nvim` |
+| LSP | `vim.lsp.config()` / `vim.lsp.enable()` + `nvim-lspconfig`；Mason LSP 桥接插件已移除 |
 | Tooling | `mason-tool-installer.nvim` |
 | Completion | `blink-cmp`, `LuaSnip`, `friendly-snippets`；completion kind icons 使用本地映射 |
 | UI / Picker | `snacks.nvim` + `noice.nvim` 窄配置；Noice 只负责 `cmdline_popup` 浮动命令行；diagnostics quickfix、statusline 与 tabline 使用 Neovim 原生实现 |
