@@ -8,7 +8,7 @@
 ## 快速开始
 
 - `<leader>` 是空格键，也就是下文的 `<leader>x` 等价于 `Space` 后再按 `x`。
-- 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件，`<leader>fg` 全项目搜索。
+- 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件（包含隐藏文件/目录），`<leader>fg` 全项目搜索。
 - 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
 - 位置历史：`<A-Left>` / `<A-Right>` 像 VSCode 一样在 jumplist 中后退 / 前进。
 - 成对输入由本地 native pairs helper 处理基础括号/引号、空 pair 删除、闭合符跳过和空 pair 回车展开。
@@ -20,7 +20,7 @@
 
 | 快捷键 | 模式 | 行为 |
 | --- | --- | --- |
-| `<leader>ff` | Normal | 查找文件 |
+| `<leader>ff` | Normal | 查找文件，默认包含隐藏文件/目录；不默认包含 ignored/gitignored |
 | `<leader>fb` | Normal | 查找已打开 buffers |
 | `<leader>fr` | Normal | 最近文件 |
 | `<leader>fp` | Normal | 项目列表 |
@@ -70,6 +70,8 @@
 | `<leader>nh` | Normal | notification history，查看完整警告 / 历史通知 |
 
 搜索补充：
+- `<leader>ff` 使用 snacks files picker，默认能搜到 `.config/...` 这类隐藏路径，但不默认包含 ignored/gitignored 文件。
+- 在 picker 内可用 `<A-h>` 切换 hidden/隐藏文件显示，用 `<A-i>` 切换 ignored/忽略文件显示。
 - 当前日常只保留 `<leader>fg` 作为全项目 grep 主入口。
 - VSCode 风格的 include / exclude / 大小写 / 整词 / 普通文本 / 大文件限制等高级搜索能力先作为后续优化方向，不在当前快捷键里展开。
 - snacks.nvim 继续负责 picker、notifier、input；Notifier 弹窗默认保留 8 秒，长警告可通过 notification history 查看完整内容。
