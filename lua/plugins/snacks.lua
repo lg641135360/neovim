@@ -94,6 +94,14 @@ return {
       desc = "Find Grep",
     },
     {
+      "<leader>sw",
+      function()
+        Snacks.picker.grep_word()
+      end,
+      desc = "Grep word or selection",
+      mode = { "n", "x" },
+    },
+    {
       "<leader>fp",
       function()
         Snacks.picker.projects()

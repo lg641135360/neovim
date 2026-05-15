@@ -1,5 +1,5 @@
--- 文件名: float_term.lua
--- 路径建议放在: ~/.config/nvim/lua/float_term.lua
+-- 模块文件: lua/customs/float_trem.lua
+-- 对应 require: require("customs.float_trem")
 
 local M = {}
 

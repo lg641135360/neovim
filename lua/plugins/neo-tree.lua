@@ -9,7 +9,7 @@ return {
     },
     config = function()
       require("neo-tree").setup({
-        close_if_last_window = true, -- 如果是最后一个窗口，关闭 neo-tree 时退出 Neovim
+        close_if_last_window = true, -- 保留插件侧最后窗口语义；目录工作流另有回归测试覆盖 <leader>e 收起后回到空 buffer
         popup_border_style = "rounded",
         clipboard = {
           sync = "universal",

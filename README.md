@@ -9,10 +9,14 @@
 
 - `<leader>` 是空格键，也就是下文的 `<leader>x` 等价于 `Space` 后再按 `x`。
 - 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件（包含隐藏文件/目录），`<leader>fg` 全项目搜索。
+- 当前词 / 选区直搜：`<leader>sw`
 - 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
+- 当前文件格式化：`<leader>fm`
+- 诊断交互：`<leader>df` 看当前行诊断，`<leader>dj` / `<leader>dk` 跳到下一个 / 上一个诊断并弹出浮窗。
 - 位置历史：`<A-Left>` / `<A-Right>` 像 VSCode 一样在 jumplist 中后退 / 前进。
 - 成对输入由本地 native pairs helper 处理基础括号/引号、空 pair 删除、闭合符跳过和空 pair 回车展开。
 - 命令行体验：`:` / `/` / `?` 使用 Noice 的 `cmdline_popup` 浮动命令行。
+- 浮窗、补全菜单、搜索当前项和 Visual 选区现在直接跟随 Catppuccin Mocha 默认非透明配色，不再额外强制透明或套用旧色板覆盖。
 
 ---
 
@@ -35,6 +39,7 @@
 - 状态栏使用原生 `statusline` + `laststatus=3`，显示 mode、文件名、modified/readonly、diagnostic counts、filetype 与位置。
 - Neo-tree 左侧 sidebar 使用整数宽度 `40`，避免 Neovim 窗口 API 收到小数宽度。
 - Neo-tree 目前明确保留：隔离 netrw/native POC 无法同时满足 follow current file、Git status、hidden/gitignored 可见性等文件树 parity 要求，因此不为减少插件牺牲 `<leader>e` 左侧文件树体验。
+- 在当前目录工作流里，关闭文件后再用 `<leader>e` 收起 Neo-tree 会回到空 buffer，不会因为没有普通文件窗口就直接退出 Neovim。
 
 ---
 
@@ -62,6 +67,7 @@
 | 快捷键 | 模式 | 行为 |
 | --- | --- | --- |
 | `<leader>fg` | Normal | 全项目 grep 搜索 |
+| `<leader>sw` | Normal / Visual | 搜索当前词或当前选区 |
 | `<leader>:` | Normal | command history |
 | `<leader>/` | Normal | search history |
 | `<leader>sd` | Normal | diagnostics picker |
@@ -71,6 +77,7 @@
 
 搜索补充：
 - `<leader>ff` 使用 snacks files picker，默认能搜到 `.config/...` 这类隐藏路径，但不默认包含 ignored/gitignored 文件。
+- `<leader>sw` 使用 `Snacks.picker.grep_word()`：普通模式搜索光标下单词，Visual 模式搜索当前选区。
 - 在 picker 内可用 `<A-h>` 切换 hidden/隐藏文件显示，用 `<A-i>` 切换 ignored/忽略文件显示。
 - 当前日常只保留 `<leader>fg` 作为全项目 grep 主入口。
 - VSCode 风格的 include / exclude / 大小写 / 整词 / 普通文本 / 大文件限制等高级搜索能力先作为后续优化方向，不在当前快捷键里展开。
@@ -96,6 +103,8 @@
 | `<leader>ca` | LSP buffer | code action；同类 Neovim 默认入口包括 `gra` |
 | `<leader>th` | LSP buffer | server 支持时切换 inlay hints |
 | `K` | LSP buffer | hover documentation |
+| `<leader>df` | Normal | 打开当前行 diagnostics 浮窗 |
+| `<leader>dj` / `<leader>dk` | Normal | 跳到下一个 / 上一个 diagnostic，并显示浮窗 |
 | `<leader>xx` | Normal | 打开 Neovim 原生 diagnostics quickfix |
 | `:lua =vim.lsp.get_clients({bufnr=0})` / `:lsp restart clangd` | Command | 查看当前 buffer 的 LSP client；clangd 已附着时重启 clangd |
 
@@ -106,6 +115,7 @@ LSP 配置说明：
 - `grr` 使用 snacks.nvim references picker，对齐 Neovim 0.12 references 默认语义。
 - 浮窗和补全菜单使用 `winborder` / `pumborder` 统一 rounded 风格。
 - 诊断行内提示使用 Neovim 原生 `virtual_text`，`virt_text_pos = "inline"`；diagnostic signs 关闭，`virtual_lines` 关闭。
+- `<leader>df` 使用 Neovim 原生 diagnostics float 查看当前行；`<leader>dj` / `<leader>dk` 会在跳转时自动弹出诊断浮窗。
 - `<leader>xx` 使用 quickfix，`<leader>sd` 使用 snacks diagnostics picker。
 
 ---
@@ -212,6 +222,7 @@ LSP 配置说明：
 
 ## 九、工具链 / 格式化
 
+- `<leader>fm`：格式化当前文件，优先走 `conform.nvim`，必要时 fallback 到 LSP formatter。
 - `mason.nvim` 负责工具链入口；LSP server 启用由原生 `vim.lsp.enable()` 负责，不再通过 Mason LSP 桥接插件桥接。
 - `mason-tool-installer.nvim` 在交互式 Neovim 启动后延迟补齐常用格式化/CLI 工具；headless 测试 / 脚本启动会跳过自动安装等 Mason 网络和写入副作用。clangd 语言服务器优先使用系统或用户 PATH 中的 `clangd`。
 - `conform.nvim` 负责格式化：Lua 使用 `stylua`，Python 使用 `black` / `isort`，Web/JSONC 使用 `prettier`，JSON 使用 `jq`，Shell 使用 `shfmt`，C/C++ 使用 `clang-format`，TeX 使用 `tex-fmt`。
@@ -232,12 +243,15 @@ LSP 配置说明：
 | Theme | `catppuccin` / Catppuccin Mocha |
 | File Tree | `neo-tree.nvim`；整数宽度 `40`；保留 follow current file、Git status、hidden/gitignored 可见性 |
 | Outline | Neovim 原生 `gO` / `<leader>o` document symbols |
-| Syntax | `nvim-treesitter`；语法高亮 / 缩进由 Treesitter 本体负责 |
+| Syntax | `nvim-treesitter`；语法高亮 / 缩进由 Treesitter 本体负责；对 Neovim 0.12 下 query predicates 的重复 capture 做了本地兼容补丁 |
 | Formatting | `conform.nvim` |
 | Git | `gitsigns.nvim` + snacks git pickers |
 | Editing | native pairs helper；滚动使用 Neovim 原生实现 |
 | Markdown / LaTeX | `markdown-preview.nvim`, `vimtex` |
 | AI | `avante.nvim` |
+
+补充：
+- `avante.nvim` 依赖的 `render-markdown.nvim` 会走 Treesitter markdown query。当前对 `nvim-treesitter` 的 query predicates 做了本地兼容层：当 Neovim 0.12 把重复 capture 传成节点列表时，先解成首个 `TSNode`，避免 `render-markdown` / fenced code block 一类场景再出现 `attempt to call method 'range' (a nil value)`。
 
 ---
 
@@ -251,7 +265,7 @@ LSP 配置说明：
 ├── lua/
 │   ├── config/      # options / keymaps / autocmds / cmake / lazy
 │   └── plugins/     # lsp / blink-cmp / snacks / ui / formatter / ...
-└── Readme.md
+└── README.md
 ```
 
 ---
