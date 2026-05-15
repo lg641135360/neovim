@@ -1,3 +1,149 @@
+local function normalize_directory(dir)
+  if not dir or dir == "" then
+    return nil
+  end
+
+  local expanded = vim.fn.fnamemodify(vim.fn.expand(dir), ":p")
+  return vim.fs.normalize(expanded)
+end
+
+local function current_search_directory()
+  local name = vim.api.nvim_buf_get_name(0)
+  if name ~= "" then
+    return vim.fs.dirname(name)
+  end
+
+  return vim.fn.getcwd()
+end
+
+local function split_csv_patterns(input)
+  if not input or vim.trim(input) == "" then
+    return {}
+  end
+
+  local items = {}
+  for _, part in ipairs(vim.split(input, ",", { trimempty = true })) do
+    local trimmed = vim.trim(part)
+    if trimmed ~= "" then
+      items[#items + 1] = trimmed
+    end
+  end
+  return items
+end
+
+local function split_whitespace_args(input)
+  if not input or vim.trim(input) == "" then
+    return {}
+  end
+
+  return vim.split(vim.trim(input), "%s+", { trimempty = true })
+end
+
+local function grep_in_directory(dir)
+  local target = normalize_directory(dir)
+  if not target or vim.fn.isdirectory(target) == 0 then
+    vim.notify(("Directory not found: %s"):format(tostring(dir)), vim.log.levels.WARN)
+    return
+  end
+
+  Snacks.picker.grep({ dirs = { target } })
+end
+
+local function grep_current_file_directory()
+  grep_in_directory(current_search_directory())
+end
+
+local function grep_prompt_directory()
+  vim.ui.input({
+    prompt = "Grep directory: ",
+    default = current_search_directory(),
+    completion = "dir",
+  }, function(input)
+    if not input or input == "" then
+      return
+    end
+
+    grep_in_directory(input)
+  end)
+end
+
+local function grep_with_constraints()
+  local modes = {
+    {
+      key = "regex",
+      label = "Regex",
+      regex = true,
+      args = {},
+    },
+    {
+      key = "fixed",
+      label = "Fixed string",
+      regex = false,
+      args = {},
+    },
+    {
+      key = "word",
+      label = "Whole word",
+      regex = false,
+      args = { "--word-regexp" },
+    },
+  }
+
+  vim.ui.select(modes, {
+    prompt = "Grep mode:",
+    format_item = function(item)
+      return item.label
+    end,
+  }, function(mode)
+    if not mode then
+      return
+    end
+
+    vim.ui.input({
+      prompt = "Include globs (,): ",
+    }, function(include_input)
+      if include_input == nil then
+        return
+      end
+
+      vim.ui.input({
+        prompt = "Exclude globs (,): ",
+      }, function(exclude_input)
+        if exclude_input == nil then
+          return
+        end
+
+        vim.ui.input({
+          prompt = "Extra rg args: ",
+          default = "",
+        }, function(extra_args_input)
+          if extra_args_input == nil then
+            return
+          end
+
+          local opts = {
+            regex = mode.regex,
+            args = vim.deepcopy(mode.args),
+          }
+
+          local include_patterns = split_csv_patterns(include_input)
+          if #include_patterns > 0 then
+            opts.glob = include_patterns
+          end
+
+          local exclude_patterns = split_csv_patterns(exclude_input)
+          if #exclude_patterns > 0 then
+            opts.exclude = exclude_patterns
+          end
+
+          vim.list_extend(opts.args, split_whitespace_args(extra_args_input))
+          Snacks.picker.grep(opts)
+        end)
+      end)
+    end)
+  end)
+end
+
 return {
   "folke/snacks.nvim",
   priority = 1000,
@@ -92,6 +238,21 @@ return {
         Snacks.picker.grep()
       end,
       desc = "Find Grep",
+    },
+    {
+      "<leader>fG",
+      grep_with_constraints,
+      desc = "Find Grep with constraints",
+    },
+    {
+      "<leader>fD",
+      grep_current_file_directory,
+      desc = "Find Grep in current file directory",
+    },
+    {
+      "<leader>fd",
+      grep_prompt_directory,
+      desc = "Find Grep in directory",
     },
     {
       "<leader>sw",

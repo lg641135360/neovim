@@ -9,6 +9,8 @@
 
 - `<leader>` 是空格键，也就是下文的 `<leader>x` 等价于 `Space` 后再按 `x`。
 - 常用文件入口：`nvim .` 打开目录，`<leader>e` 切换 Neo-tree，`<leader>ff` 找文件（包含隐藏文件/目录），`<leader>fg` 全项目搜索。
+- 引导式高级搜索：`<leader>fG` 依次选择搜索模式、include / exclude globs 与额外 rg 参数，然后进入 grep picker 输入实际查询。
+- 目录范围搜索：`<leader>fD` 搜当前文件所在目录，`<leader>fd` 先指定目录再搜索。
 - 当前词 / 选区直搜：`<leader>sw`
 - 保存与关闭：`<C-s>` / `<leader>w` 保存，`:q` / `<leader>q` 关闭当前文件 buffer，`<leader>c` 强制关闭当前 buffer。
 - 当前文件格式化：`<leader>fm`
@@ -67,6 +69,9 @@
 | 快捷键 | 模式 | 行为 |
 | --- | --- | --- |
 | `<leader>fg` | Normal | 全项目 grep 搜索 |
+| `<leader>fG` | Normal | 引导式高级 grep：模式 / include / exclude / extra rg args |
+| `<leader>fD` | Normal | 只搜索当前文件所在目录 |
+| `<leader>fd` | Normal | 先输入目录，再只搜索该目录 |
 | `<leader>sw` | Normal / Visual | 搜索当前词或当前选区 |
 | `<leader>:` | Normal | command history |
 | `<leader>/` | Normal | search history |
@@ -77,10 +82,12 @@
 
 搜索补充：
 - `<leader>ff` 使用 snacks files picker，默认能搜到 `.config/...` 这类隐藏路径，但不默认包含 ignored/gitignored 文件。
+- `<leader>fg` 继续作为全项目 grep 主入口；`<leader>fD` 用当前文件目录快速收窄范围，`<leader>fd` 用 Snacks input 输入任意目录后再 grep。
+- `<leader>fG` 不再直接暴露一整行原始 ripgrep 参数，而是先用引导式 prompt 收集常见约束：搜索模式（regex / fixed string / whole word）、include globs、exclude globs，再可选补一行额外 rg 参数，最后进入 Snacks grep picker 输入实际查询文本。
+- `<leader>fG` 常见用法示例：include 填 `*.lua,*.md`；exclude 填 `node_modules,.git`；extra rg args 可填 `-i --max-filesize 1M`。如果只想做普通高级过滤，也可以把 extra rg args 留空。
 - `<leader>sw` 使用 `Snacks.picker.grep_word()`：普通模式搜索光标下单词，Visual 模式搜索当前选区。
 - 在 picker 内可用 `<A-h>` 切换 hidden/隐藏文件显示，用 `<A-i>` 切换 ignored/忽略文件显示。
-- 当前日常只保留 `<leader>fg` 作为全项目 grep 主入口。
-- VSCode 风格的 include / exclude / 大小写 / 整词 / 普通文本 / 大文件限制等高级搜索能力先作为后续优化方向，不在当前快捷键里展开。
+- 更重的 VSCode 风格多字段表单（例如单独的 files to include / files to exclude 面板、更多 preset）仍可作为后续优化方向；当前先保留这版引导式 `<leader>fG`。
 - snacks.nvim 继续负责 picker、notifier、input；Notifier 弹窗默认保留 8 秒，长警告可通过 notification history 查看完整内容。
 - Dashboard 不启用，启动页回到 Neovim 原生空 buffer。
 
