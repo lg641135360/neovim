@@ -5,7 +5,7 @@ return {
     event = "VeryLazy",
     build = ":TSUpdate", -- lazy.nvim 里用 build，不是 run
     config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+      require("nvim-treesitter").setup(opts)
       require("config.treesitter_compat").setup()
     end,
     opts = {

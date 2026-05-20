@@ -53,12 +53,11 @@ function M.setup()
     return
   end
 
-  local ok = pcall(require, "nvim-treesitter.query_predicates")
+  local ok, query = pcall(require, "vim.treesitter.query")
   if not ok then
     return
   end
 
-  local query = require("vim.treesitter.query")
   local opts = vim.fn.has("nvim-0.10") == 1 and { force = true, all = false } or true
 
   query.add_predicate("nth?", function(match, _pattern, _bufnr, pred)
