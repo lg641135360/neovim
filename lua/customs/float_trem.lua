@@ -53,8 +53,8 @@ function M.open()
     border = "rounded",
   })
 
-  -- Linux 使用 zsh 打开交互终端
-  M.term_chan = vim.fn.termopen({ "zsh", "-i" }, { detach = 0 })
+  -- 使用 vim.o.shell 跟随用户登录 shell，避免硬编码 zsh
+  M.term_chan = vim.fn.termopen({ vim.o.shell }, { detach = 0 })
 
   vim.cmd("startinsert")
 
