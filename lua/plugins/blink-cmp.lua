@@ -172,5 +172,3 @@ return {
   },
   opts_extend = { "sources.default" },
 }
-
--- return {}

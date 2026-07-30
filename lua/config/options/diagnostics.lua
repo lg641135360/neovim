@@ -16,8 +16,6 @@ function M.setup()
       border = "rounded",
       source = "if_many",
     },
-    -- underline = true, -- 保留下划线标记
-    -- update_in_insert = false, -- 插入模式不更新（可选）
   })
 end
 

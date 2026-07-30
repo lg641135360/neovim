@@ -1,7 +1,7 @@
 -- lazy.nvim plugin config
 return {
   "lervag/vimtex",
-  lazy = false, -- 不要 lazy load
+  ft = "tex",
   init = function()
     vim.g.vimtex_view_method = "zathura" -- PDF 查看器
     vim.g.vimtex_compiler_method = "latexmk"

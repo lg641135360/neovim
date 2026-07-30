@@ -11,9 +11,6 @@ function M.setup()
   vim.opt.swapfile = false
   vim.opt.mouse = "a"
 
-  -- 禁止自动注释续行
-  vim.opt.formatoptions:remove({ "c", "r", "o" })
-
   vim.opt.cursorline = true -- 开启光标行高亮（可以只高亮行号）
   vim.opt.cursorlineopt = "number" -- 只高亮行号，而不是整行
 
@@ -23,7 +20,7 @@ function M.setup()
   vim.opt.iskeyword:append("-")
 
   -- 使得左右键可以跨行
-  vim.o.whichwrap = vim.o.whichwrap .. "<>,h,l"
+  vim.opt.whichwrap:append("<>,h,l")
 
   -- 禁止加载 netrw 核心
   vim.g.loaded_netrw = 1
