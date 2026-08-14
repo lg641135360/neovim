@@ -204,13 +204,14 @@ LSP 配置说明：
 | --- | --- |
 | `:CMakeUserPresetInit` | 在当前 CMake 项目生成本地 `CMakeUserPresets.json` |
 | `:CMakeUserPresetInit!` | 强制覆盖生成本地 `CMakeUserPresets.json` |
-| `:CMakeConfigure` | 有 user preset 时自动使用 `nvim-debug`；若不存在则使用第一个 `configurePresets[].name`；否则 fallback 到 `cmake -S <root> -B <root>/build` |
+| `:CMakeConfigure` | 有 user preset 时自动使用 `nvim-debug`；若不存在则使用第一个 `configurePresets[].name`；否则 fallback 到 `cmake -S <root> -B <root>/build`；成功后自动建立根目录 `compile_commands.json -> build/compile_commands.json` |
 | `:CMakeConfigure {preset}` | 使用指定 configure preset；如果传入 build preset，会自动转到它的 `configurePreset` |
+| `:CMakeCompileCommands` | 检查 `build/compile_commands.json` 并建立根目录相对软链接；缺失数据库时报错，已有普通文件或指向其他位置的链接不会覆盖 |
 
 说明：
 - `:CMakeUserPresetInit` 生成的默认 preset 名为 `nvim-debug`，`binaryDir = ${sourceDir}/build`，generator 为 Ninja。
 - 已有项目如果只有 `linux-base` 这类自定义 preset，直接执行 `:CMakeConfigure` 会自动选择它；也可以显式执行 `:CMakeConfigure linux-base`。`linux-build` 这类 build preset 不是 configure preset，但本配置会自动读取它的 `configurePreset` 字段。
-- 配合当前 clangd 的 `--compile-commands-dir=build`，项目 CMake 已启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 时会生成 `build/compile_commands.json`。
+- 项目 CMake 已启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 时会生成 `build/compile_commands.json`；`:CMakeConfigure` 或 `:CMakeCompileCommands` 会将它安全链接到项目根目录，clangd 不再依赖共享配置中的固定构建目录。该链接属于本地构建入口，不希望提交时应由项目自己的 `.gitignore` 忽略 `compile_commands.json`。
 - 如果 clangd 诊断或跳转结果没有刷新，先执行 `:lua =vim.lsp.get_clients({bufnr=0})` 确认当前 buffer 已有 `clangd` client；已附着时再执行 `:lsp restart clangd`。若提示 `no active clients named clangd`，说明 clangd 当前没有附着到这个 buffer。
 - `filetype=cpp` 但 client 仍是 `{}` 时，继续检查：`:lua print(vim.lsp.is_enabled("clangd"))`、`:lua print(vim.fn.executable("clangd"), vim.fn.exepath("clangd"))`、`:lua =vim.fs.root(0, {"CMakeLists.txt", "CMakePresets.json", "CMakeUserPresets.json", "compile_commands.json", ".git"})`；若 `executable("clangd") = 0`，先安装 clangd 并让它进入 Neovim 的 `PATH`。修复后重启 Neovim 或对该文件执行 `:edit` 触发重新 attach。
 - 新环境 clangd 入口约定：优先把机器/厂商特定 clangd 安装在任意版本化目录，再用 `~/.local/bin/clangd` 作为稳定入口软链；不要把 `/usr/local/musa/bin` 这类机器路径写进共享 dotfiles。示例：

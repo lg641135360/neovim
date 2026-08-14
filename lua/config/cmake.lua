@@ -139,6 +139,58 @@ local function notify_command_result(label, result)
   vim.notify(message, level, { title = "CMake" })
 end
 
+local function normalized_path(path)
+  return vim.fs.normalize(path)
+end
+
+function M.link_compile_commands()
+  local root = find_project_root()
+  local database = vim.fs.joinpath(build_dir(root), "compile_commands.json")
+  local link = vim.fs.joinpath(root, "compile_commands.json")
+  local relative_target = "build/compile_commands.json"
+
+  local database_stat = vim.uv.fs_stat(database)
+  if not database_stat or database_stat.type ~= "file" then
+    vim.notify(
+      "CMake compile database not found: " .. database .. "\nRun :CMakeConfigure first.",
+      vim.log.levels.ERROR,
+      { title = "CMake" }
+    )
+    return false
+  end
+
+  local existing = vim.uv.fs_lstat(link)
+  if existing then
+    if existing.type ~= "link" then
+      vim.notify("Refusing to overwrite existing file: " .. link, vim.log.levels.ERROR, { title = "CMake" })
+      return false
+    end
+
+    local target = vim.uv.fs_readlink(link)
+    local target_path = target
+    if target and not target:match("^/") then
+      target_path = vim.fs.joinpath(root, target)
+    end
+
+    if target_path and normalized_path(target_path) == normalized_path(database) then
+      vim.notify("compile_commands.json already points to build/compile_commands.json", vim.log.levels.INFO, { title = "CMake" })
+      return true
+    end
+
+    vim.notify("Refusing to replace existing compile_commands.json link: " .. link, vim.log.levels.ERROR, { title = "CMake" })
+    return false
+  end
+
+  local ok, err = vim.uv.fs_symlink(relative_target, link, 0)
+  if not ok then
+    vim.notify("Failed to create " .. link .. ": " .. tostring(err), vim.log.levels.ERROR, { title = "CMake" })
+    return false
+  end
+
+  vim.notify("Created compile_commands.json -> " .. relative_target, vim.log.levels.INFO, { title = "CMake" })
+  return true
+end
+
 function M.init_user_preset(opts)
   opts = opts or {}
   local root = find_project_root()
@@ -196,7 +248,8 @@ function M.configure(opts)
     vim.schedule(function()
       notify_command_result("Configure", result)
       if result.code == 0 then
-        vim.notify("compile_commands.json should now be available for clangd. Use :lua =vim.lsp.get_clients({bufnr=0}) to check active clients; if clangd is active, run :lsp restart clangd.", vim.log.levels.INFO, { title = "CMake" })
+        M.link_compile_commands()
+        vim.notify("Use :lua =vim.lsp.get_clients({bufnr=0}) to inspect the active client; if clangd was already attached, run :lsp restart clangd.", vim.log.levels.INFO, { title = "CMake" })
       end
     end)
   end)
@@ -207,9 +260,13 @@ function M.setup()
     M.init_user_preset({ force = opts.bang })
   end, { bang = true, desc = "Create a local CMakeUserPresets.json for Neovim" })
 
+  vim.api.nvim_create_user_command("CMakeCompileCommands", function()
+    M.link_compile_commands()
+  end, { desc = "Link build/compile_commands.json at the project root" })
+
   vim.api.nvim_create_user_command("CMakeConfigure", function(opts)
     M.configure({ preset = opts.args })
-  end, { nargs = "?", complete = complete_presets, desc = "Configure CMake to generate build/compile_commands.json" })
+  end, { nargs = "?", complete = complete_presets, desc = "Configure CMake and link compile_commands.json" })
 end
 
 return M
